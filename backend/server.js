@@ -1,15 +1,13 @@
 const express = require("express");
 const cors = require("cors");
+const interviewRoutes = require("./routes/interview.routes");
 
 const app=express();
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/",(Req,Res)=>{
-    Res.json({ message: "AI Interview Backend Running 🚀" })
-
-});
+app.use("/api/interview", interviewRoutes);
 
 const PORT=5000;
 
