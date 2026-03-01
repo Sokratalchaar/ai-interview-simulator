@@ -3,6 +3,7 @@ const prisma = require("../lib/prisma");
 const { error } = require("console");
 const { create } = require("domain");
 const { connect } = require("http2");
+const openai = require("../lib/openai");
 
 exports.startInterview = async (req, res) => {
   try {
@@ -132,5 +133,49 @@ exports.answerQuestion = async(req, res)=>{
   } catch(error){
     console.error(error);
     res.status(500).json({error: "Failed to save answer."})
+  }
+}
+
+exports.evaluateAnswer = async(req,res)=>{
+  try{
+    const { id } = req.params;
+    const answer = await prisma.answer.findUnique({
+      where:{
+        questionId: Number(id),
+      }
+    });
+    if(!answer){
+      return res.status(404).json({error:"Answer not found"});
+    }
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are an interview evaluator. Give a score from 1 to 10 and short feedback."
+        },
+        {
+          role: "user",
+          content: `Evaluate this answer: ${answer.content}`
+        }
+      ],
+    });
+    const aiResponse = completion.choices[0].message.content;
+    const scoreMatch = aiResponse.match(/\d+/);
+    const score = scoreMatch ? parseInt(scoreMatch[0]) : 5;
+
+    const updateAnswer = await prisma.answer.update({
+      where: {
+        id: answer.id
+      },
+      data: {
+        score,
+        feedback : aiResponse
+      }
+    });
+    res.json(updateAnswer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Evaluation failed" });
   }
 }
