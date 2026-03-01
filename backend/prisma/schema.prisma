@@ -30,6 +30,8 @@ model Question {
 model Answer {
   id         Int       @id @default(autoincrement())
   content    String
+  score      Int?
+  feedback   String?
   question   Question @relation(fields: [questionId],references: [id])
   questionId Int @unique
 }
