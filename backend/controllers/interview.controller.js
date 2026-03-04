@@ -5,11 +5,13 @@ const { create } = require("domain");
 const { connect } = require("http2");
 const openai = require("../lib/openai");
 
+
 exports.startInterview = async (req, res) => {
   try {
     const session = await prisma.interviewSession.create({
       data: {
         status: "STARTED",
+        userId: req.userId,
         questions : {
           create : [
             {content: "Tell me about yourself."},
@@ -31,6 +33,9 @@ exports.startInterview = async (req, res) => {
   exports.getAllSessions = async (req,res)=>{
     try{
     const sessions = await prisma.interviewSession.findMany({
+      where: {
+        userId: req.userId
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -119,6 +124,16 @@ exports.answerQuestion = async(req, res)=>{
   try{
     const {questionId}=req.params;
     const {content}=req.body;
+    const question = await prisma.question.findUnique({
+      where:{ id:Number(questionId) },
+      include:{ session:true }
+    });
+    if(!question){
+      return res.status(404).json({error:"Question not found"});
+    }
+    if(question.session.userId !== req.userId){
+      return res.status(403).json({error:"Not allowed"});
+    }
     const answer = await prisma.answer.create({
       data: {
         content,
@@ -138,14 +153,24 @@ exports.answerQuestion = async(req, res)=>{
 
 exports.evaluateAnswer = async(req,res)=>{
   try{
-    const { id } = req.params;
+    const { id: questionId } = req.params;
     const answer = await prisma.answer.findUnique({
       where:{
-        questionId: Number(id),
+        questionId: Number(questionId),
+      },
+      include:{
+        question:{
+          include:{
+            session:true
+          }
+        }
       }
     });
     if(!answer){
       return res.status(404).json({error:"Answer not found"});
+    }
+    if(answer.question.session.userId!==req.userId){
+      return res.status(403).json({error:"Not allowed"});
     }
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -164,7 +189,7 @@ exports.evaluateAnswer = async(req,res)=>{
     const scoreMatch = aiResponse.match(/\d+/);
     const score = scoreMatch ? parseInt(scoreMatch[0]) : 5;
 
-    const updateAnswer = await prisma.answer.update({
+    const updatedAnswer = await prisma.answer.update({
       where: {
         id: answer.id
       },
@@ -173,7 +198,7 @@ exports.evaluateAnswer = async(req,res)=>{
         feedback : aiResponse
       }
     });
-    res.json(updateAnswer);
+    res.json(updatedAnswer);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Evaluation failed" });
