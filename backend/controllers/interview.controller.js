@@ -8,16 +8,29 @@ const openai = require("../lib/openai");
 
 exports.startInterview = async (req, res) => {
   try {
+    const{ role, level, tech } =req.body;
+    const completion = await openai.chat.completions.create({
+      model:"gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are a technical interviewer."
+        },
+        {
+          role: "user",
+          content: `Generate 3 interview questions for a ${level} ${role} specializating in ${tech}. Return only the questions.`
+        }
+      ]
+    });
+    const aiQuestions = completion.choices[0].message.content.split("\n").filter(q=>q.trim()!=="");
     const session = await prisma.interviewSession.create({
       data: {
         status: "STARTED",
         userId: req.userId,
         questions : {
-          create : [
-            {content: "Tell me about yourself."},
-            {content: "What are your strengths?"},
-            {content: "Why should we hire you?"}
-          ]
+          create : aiQuestions.map(q=>({
+            content: q
+          }))
         }
       },
       include: {
@@ -39,6 +52,13 @@ exports.startInterview = async (req, res) => {
       orderBy: {
         createdAt: "desc",
       },
+      include:{
+        questions:{
+         include:{
+          answer:true
+         }
+        }
+       }
     });
     res.status(200).json(sessions);
 
@@ -55,10 +75,21 @@ exports.startInterview = async (req, res) => {
       where: {
         id:Number(id),
       },
+      include:{
+        questions:{
+          include:{
+            answer: true
+          }
+        }
+      }
     });
     if(!session){
       return res.status(404).json({error:"Session not found"});
     }
+    if(session.userId !==req.userId){
+      return res.status(403).json({error:"Not allowed"});
+     }
+   
     res.status(200).json(session);
   }catch(error){
     console.error(error);
@@ -70,14 +101,27 @@ exports.startInterview = async (req, res) => {
     try{
     const { id } = req.params;
     const { status } = req.body;
-    const updateSession = await prisma.interviewSession.update({
+    const session = await prisma.interviewSession.update({
       where : {
-        id:Number(id),
-      },
-      data: {
-        status,
-      },
+        id:Number(id)
+      }
     });
+    if(!session){
+      return res.status(404).json({error:"Session not found"});
+     }
+   
+     if(session.userId !== req.userId){
+      return res.status(403).json({error:"Not allowed"});
+     }
+     const updateSession = await prisma.interviewSession.update({
+      where:{
+       id:Number(id)
+      },
+      data:{
+       status
+      }
+     });
+    
     res.status(200).json(updateSession);
   }catch(error){
     console.error(error);
@@ -88,13 +132,24 @@ exports.startInterview = async (req, res) => {
 exports.deleteSession = async(req,res)=>{
   try{
     const { id } = req.params;
-    prisma.interviewSession.delete({
+    const session = await prisma.interviewSession.findUnique({
+      where:{
+        id:Number(id)
+      }
+    });
+    if(!session){
+      return res.status(404).json({error:"Session not found"});
+     }
+     if(session.userId!==req.userId){
+      return res.status(403).json({error:"Not allowed"});
+     }
+    await prisma.interviewSession.delete({
       where: {
         id: Number(id),
       },
     });
     res.status(200).json({message: "Session deleted successfuly"});
-  }catch{
+  }catch(error){
     console.error(error);
     res.status(500).json({error:"Failed to delete session"});
   }
@@ -144,7 +199,7 @@ exports.answerQuestion = async(req, res)=>{
         }
       }
     });
-    res.status(200).json(answer);
+    res.status(201).json(answer);
   } catch(error){
     console.error(error);
     res.status(500).json({error: "Failed to save answer."})
@@ -203,4 +258,45 @@ exports.evaluateAnswer = async(req,res)=>{
     console.error(error);
     res.status(500).json({ error: "Evaluation failed" });
   }
+}
+
+exports.getInterviewScore = async(req,res)=>{
+  try{
+    const { id } = req.params;
+    const session = await prisma.interviewSession.findUnique({
+      where: {
+        id: Number(id)
+      },
+      include:{
+        questions:{
+          include:{
+            answer: true
+          }
+        }
+      }
+    });
+    if(!session){
+      return res.status(404).json({error:"Session not found"});
+     }
+   
+     if(session.userId !== req.userId){
+      return res.status(403).json({error:"Not allowed"});
+     }
+     const scores = session.questions.map(q=>q.answer?.score).filter(score=>score!==null&&score!==undefined);
+     
+     if(scores.length === 0){
+      return res.json({score:0});
+     }
+     const total = scores.reduce((sum,s)=> sum + s ,0);
+     const average = total / scores.length;
+
+     res.json({
+      interviewId: session.id,
+      score: average
+     });
+   
+    }catch(error){
+     console.error(error);
+     res.status(500).json({error:"Failed to calculate score"});
+    }
 }
