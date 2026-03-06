@@ -5,6 +5,28 @@ const jwt = require("jsonwebtoken");
 
 exports.register = async(req,res)=>{
     const {email,password}=req.body;
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if(!email || !password){
+        return res.status(400).json({
+          error:"Email and password are required"
+        });
+      }
+    
+      if(password.length < 8){
+        return res.status(400).json({
+          error:"Password must be at least 8 characters"
+        });
+      }
+    
+    if(!gmailRegex.test(email)){
+        return res.status(400).json({error:"Only Gmail addresses are allowed."})
+    }
+    if(!passwordRegex.test(password)){
+        return res.status(400).json({
+         error:"Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character"
+        });
+       }
     try{
         const hashedPassword = await bcrypt.hash(password,10);
 
@@ -22,6 +44,18 @@ exports.register = async(req,res)=>{
 
 exports.login = async(req,res)=>{
     const { email,password } = req.body;
+
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if(!email || !password){
+        return res.status(400).json({
+          error:"Email and password are required"
+        });
+      }
+      if(!gmailRegex.test(email)){
+        return res.status(400).json({
+          error:"Only Gmail addresses are allowed."
+        });    
+     }
     const user = await prisma.user.findUnique({
         where: {
             email
