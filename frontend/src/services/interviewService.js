@@ -45,3 +45,49 @@ export const evaluateAnswer = async(questionId)=>{
     );
     return response.data;
 }
+
+export const getInterviewScore = async(sessionId)=>{
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${API}/${sessionId}/score`,
+        {
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        }
+
+    );
+    return response.data;
+};
+
+export const getMyInterviews = async()=>{
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${API}/my`,{
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const getInterviewDetails = async(id)=>{
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${API}/${id}`,{
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const deleteInterview = async (id)=>{
+    const token = localStorage.getItem("token");
+  
+    const res = await axios.delete(
+      `http://localhost:5000/api/interview/${id}`,
+      {
+        headers:{ Authorization:`Bearer ${token}` }
+      }
+    );
+  
+    return res.data;
+  };
