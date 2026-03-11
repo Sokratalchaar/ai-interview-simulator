@@ -54,50 +54,103 @@ function InterviewPage() {
       }
      };
 
-    return (
-      <div>
-  
-        <h1>Interview Session</h1>
-        <p>Question {currentIndex + 1} / {questions.length}</p>
-  
-        <h3>{questions[currentIndex]?.content}</h3>
-        <textarea
-        rows="6"
-        cols="60"
-        value={answer}
-        placeholder="Write your answer here"
-        onChange={(e)=>setAnswer(e.target.value)}
-        />
-        <br/><br/>
+     return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+    
+        <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-2xl">
+    
+          <h1 className="text-2xl font-bold mb-2 text-center">
+            Interview Session
+          </h1>
+    
+          <p className="text-center text-gray-500 mb-6">
+            Question {currentIndex + 1} / {questions.length}
+          </p>
 
-        <button disabled={!answer.trim()} onClick={handleSubmit}>Submit Answer</button>
-        {loading && <p>Evaluating your answer...</p>}
-        
-        {score && (
-        <div>
-        <h3>Score: {score} / 10</h3>
-        <p>{feedback}</p>
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+          <div
+               className="bg-blue-600 h-2 rounded-full"
+               style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
+                />
+          </div>
+    
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold">
+              {questions[currentIndex]?.content}
+            </h3>
+          </div>
+    
+          <textarea
+            rows="6"
+            value={answer}
+            placeholder="Write your answer here..."
+            onChange={(e)=>setAnswer(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+    
+          <div className="mt-4">
+    
+            <button
+              disabled={!answer.trim()}
+              onClick={handleSubmit}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+            >
+              Submit Answer
+            </button>
+    
+          </div>
+    
+          {loading && (
+            <p className="mt-4 text-gray-500">
+              Evaluating your answer...
+            </p>
+          )}
+    
+          {score && (
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+    
+              <h3 className="font-semibold mb-2">
+                Score: {score} / 10
+              </h3>
+    
+              <p className="text-gray-700">
+                {feedback}
+              </p>
+    
+            </div>
+          )}
+    
+          {score && currentIndex < questions.length - 1 && (
+            <button
+              onClick={() => {
+                setCurrentIndex(currentIndex + 1);
+                setAnswer("");
+                setScore(null);
+                setFeedback("");
+                setSubmitted(false);
+              }}
+              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+            >
+              Next Question
+            </button>
+          )}
+    
+          {score && currentIndex === questions.length - 1 && (
+            <div className="mt-6 text-center">
+    
+              <h3 className="text-xl font-semibold mb-2">
+                Interview Finished 🎉
+              </h3>
+    
+              <h2 className="text-2xl font-bold text-blue-600">
+                Final Score: {finalScore}/10
+              </h2>
+    
+            </div>
+          )}
+    
         </div>
-        )}
-
-        {score && currentIndex < questions.length - 1 && (
-        <button onClick={() => {
-         setCurrentIndex(currentIndex + 1);
-         setAnswer("");
-         setScore(null);
-         setFeedback("");
-         setSubmitted(false);
-          }}>
-        Next Question
-       </button>
-        )}
-        {score && currentIndex === questions.length - 1 && (
-        <div>
-        <h3>Interview Finished 🎉</h3>
-        <h2>Final Score: {finalScore}/10</h2>
-        </div>
-        )}
-  
+    
       </div>
     );
   }
