@@ -43,9 +43,9 @@ exports.startInterview = async (req, res) => {
     res.status(500).json({ error: "Failed to create session" });
   }};
 
-  exports.getAllSessions = async (req,res)=>{
+  exports.getUserInterviews = async (req,res)=>{
     try{
-    const sessions = await prisma.interviewSession.findMany({
+    const interviews = await prisma.interviewSession.findMany({
       where: {
         userId: req.userId
       },
@@ -60,18 +60,29 @@ exports.startInterview = async (req, res) => {
         }
        }
     });
-    res.status(200).json(sessions);
+     
+      const result = interviews.map(interview=>{
+      const scores = interview.questions.map(q=>q.answer?.score).filter(score => score !== null && score !== undefined);
+      const total=scores.reduce((sum,s)=>sum + s ,0);
+      const average = scores.length? (total/scores.length).toFixed(1):null;
+      return{
+        id:interview.id,
+        createdAt:interview.createdAt,
+        score:average
+      };
+    });
+    res.json(result);
 
   }catch (error){
     console.error(error);
-    res.status(500).json({error : "Failed to fetch sessions"});
+    res.status(500).json({error : "Failed to fetch interviews"});
   }
   }
 
-  exports.getSessionById = async(req,res)=>{
+  exports.getInterviewDetails = async(req,res)=>{
     try{
     const {id} = req.params;
-    const session = await prisma.interviewSession.findUnique({
+    const interview = await prisma.interviewSession.findUnique({
       where: {
         id:Number(id),
       },
@@ -83,17 +94,17 @@ exports.startInterview = async (req, res) => {
         }
       }
     });
-    if(!session){
-      return res.status(404).json({error:"Session not found"});
+    if(!interview){
+      return res.status(404).json({error:"interview not found"});
     }
-    if(session.userId !==req.userId){
+    if(interview.userId !==req.userId){
       return res.status(403).json({error:"Not allowed"});
      }
    
-    res.status(200).json(session);
+    res.status(200).json(interview);
   }catch(error){
     console.error(error);
-    res.status(500).json({error:"Failed to fetch session"});
+    res.status(500).json({error:"Failed to fetch interview details."});
   }
   }
 
@@ -129,29 +140,45 @@ exports.startInterview = async (req, res) => {
   }
 }
 
-exports.deleteSession = async(req,res)=>{
+exports.deleteInterview = async(req,res)=>{
   try{
     const { id } = req.params;
-    const session = await prisma.interviewSession.findUnique({
+    const interview = await prisma.interviewSession.findUnique({
       where:{
         id:Number(id)
       }
     });
-    if(!session){
-      return res.status(404).json({error:"Session not found"});
+    if(!interview){
+      return res.status(404).json({error:"interview not found"});
      }
-     if(session.userId!==req.userId){
+     if(interview.userId!==req.userId){
       return res.status(403).json({error:"Not allowed"});
      }
+
+     await prisma.answer.deleteMany({
+      where:{
+        question:{
+          sessionId:Number(id)
+        }
+      }
+     });
+
+     await prisma.question.deleteMany({
+      where:{
+        sessionId:Number(id)
+      }
+     });
+
+
     await prisma.interviewSession.delete({
       where: {
         id: Number(id),
       },
     });
-    res.status(200).json({message: "Session deleted successfuly"});
+    res.status(200).json({message: "interview deleted successfuly"});
   }catch(error){
     console.error(error);
-    res.status(500).json({error:"Failed to delete session"});
+    res.status(500).json({error:"Failed to delete interview"});
   }
 }
 
@@ -244,13 +271,19 @@ exports.evaluateAnswer = async(req,res)=>{
     const scoreMatch = aiResponse.match(/\d+/);
     const score = scoreMatch ? parseInt(scoreMatch[0]) : 5;
 
+    let feedback = aiResponse;
+
+    if (aiResponse.includes("Feedback:")) {
+    feedback = aiResponse.split("Feedback:")[1].trim();
+       }
+
     const updatedAnswer = await prisma.answer.update({
       where: {
         id: answer.id
       },
       data: {
         score,
-        feedback : aiResponse
+        feedback
       }
     });
     res.json(updatedAnswer);
@@ -288,7 +321,7 @@ exports.getInterviewScore = async(req,res)=>{
       return res.json({score:0});
      }
      const total = scores.reduce((sum,s)=> sum + s ,0);
-     const average = total / scores.length;
+     const average = (total / scores.length).toFixed(1);
 
      res.json({
       interviewId: session.id,
