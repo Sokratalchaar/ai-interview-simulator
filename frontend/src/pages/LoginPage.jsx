@@ -15,6 +15,7 @@ function LoginPage() {
 
         const data = await login(email,password);
         localStorage.setItem("token", data.token);
+        localStorage.setItem("email", email);
     
         console.log("Token:", data.token);
         navigate("/dashboard");

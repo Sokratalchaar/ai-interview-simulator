@@ -5,25 +5,71 @@ import DashboardPage from "./pages/DashboardPage";
 import InterviewPage from "./pages/InterviewPage";
 import InterviewDetailsPage from "./pages/InterviewDetailsPage";
 import StartInterviewPage from "./pages/StartInterviewPage";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ProfilePage from "./pages/ProfilePage";
 
 
 function App() {
   return (
+    <>
+    <Navbar/>
+      <div className="p-8">
+
     <Routes>
 
       <Route path="/login" element={<LoginPage />} />
 
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route path="/dashboard" element={<DashboardPage/>} />
-      
-      <Route path="/interview" element={<InterviewPage />} />
-      
-      <Route path="/interview/:id" element={<InterviewDetailsPage />} />
+      <Route
+  path="/dashboard"
+  element={
+    <ProtectedRoute>
+      <DashboardPage />
+    </ProtectedRoute>
+  }
+/>
 
-      <Route path="/start-interview" element={<StartInterviewPage />} />
+<Route
+  path="/interview"
+  element={
+    <ProtectedRoute>
+      <InterviewPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/interview/:id"
+  element={
+    <ProtectedRoute>
+      <InterviewDetailsPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/start-interview"
+  element={
+    <ProtectedRoute>
+      <StartInterviewPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <ProfilePage />
+    </ProtectedRoute>
+  }
+/>
 
     </Routes>
+      </div>
+    </>
   );
 }
 
