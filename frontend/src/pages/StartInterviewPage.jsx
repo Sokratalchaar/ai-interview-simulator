@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { startInterview } from "../services/interviewService";
 
 function StartInterviewPage(){
 
@@ -9,45 +10,73 @@ function StartInterviewPage(){
 
  const navigate = useNavigate();
 
- const handleStart = () => {
+ const handleStart = async () => {
 
-   navigate("/interview",{
-     state:{
-       role,
-       level,
-       tech
-     }
-   });
+  try {
 
- };
+    const data = await startInterview({
+      role,
+      level,
+      tech
+    });
 
- return(
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-  
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-  
-        <h1 className="text-2xl font-bold mb-6 text-center">
-          Start AI Interview
-        </h1>
-  
-        <div className="space-y-4">
-  
+    navigate("/interview", {
+      state: {
+        questions: data.questions,
+        sessionId: data.id
+      
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+  }
+
+};
+
+ return (
+  <div className="min-h-screen bg-gray-50">
+
+    <div className="max-w-5xl mx-auto px-6 py-16">
+
+      <h1 className="text-4xl font-bold text-center mb-4">
+        Start AI Interview
+      </h1>
+
+      <p className="text-gray-500 text-center mb-12">
+        Generate a personalized technical interview based on your role and stack.
+      </p>
+
+
+      <div className="bg-white shadow-lg rounded-2xl p-10">
+
+        <div className="grid md:grid-cols-2 gap-6">
+
+          {/* Role */}
           <div>
-            <p className="text-sm font-medium mb-1">Role</p>
+            <label className="block text-sm font-semibold mb-2">
+              Role
+            </label>
+
             <input
               value={role}
               onChange={(e)=>setRole(e.target.value)}
               placeholder="Backend Developer"
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-  
+
+
+          {/* Level */}
           <div>
-            <p className="text-sm font-medium mb-1">Level</p>
+            <label className="block text-sm font-semibold mb-2">
+              Level
+            </label>
+
             <select
               value={level}
               onChange={(e)=>setLevel(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Level</option>
               <option value="Junior">Junior</option>
@@ -55,31 +84,39 @@ function StartInterviewPage(){
               <option value="Senior">Senior</option>
             </select>
           </div>
-  
-          <div>
-            <p className="text-sm font-medium mb-1">Tech Stack</p>
+
+
+          {/* Tech Stack */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold mb-2">
+              Tech Stack
+            </label>
+
             <input
               value={tech}
               onChange={(e)=>setTech(e.target.value)}
-              placeholder="Node.js / React / Java"
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Node.js, React, Java, SQL..."
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-  
-          <button
-            onClick={handleStart}
-            disabled={!role || !level || !tech}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition mt-4"
-          >
-            Start Interview
-          </button>
-  
+
         </div>
-  
+
+
+        <button
+          onClick={handleStart}
+          disabled={!role || !level || !tech}
+          className="w-full mt-8 bg-blue-600 text-white py-3 rounded-lg text-lg hover:bg-blue-700 transition disabled:bg-gray-400"
+        >
+          Start Interview
+        </button>
+
       </div>
-  
+
     </div>
-  );
+
+  </div>
+);
 }
 
 export default StartInterviewPage;

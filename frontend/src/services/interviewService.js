@@ -3,10 +3,10 @@ import axios from "axios";
 
 const API = "http://localhost:5000/api/interview";
 
-export const startInterview = async ()=>{
+export const startInterview = async (data)=>{
     const token = localStorage.getItem("token");
 
-    const response = await axios.post(`${API}/start`,{},
+    const response = await axios.post(`${API}/start`,data,
         {
             headers: {
                 Authorization: `Bearer ${token}`

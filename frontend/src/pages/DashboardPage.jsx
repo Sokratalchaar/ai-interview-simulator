@@ -5,6 +5,8 @@ import { getMyInterviews,deleteInterview } from "../services/interviewService";
 
 function DashboardPage() {
     const navigate = useNavigate();
+    const [showDeleteModal,setShowDeleteModal] = useState(false);
+    const [selectedInterview,setSelectedInterview] = useState(null);
     const [interviews, setInterviews] = useState([]);
     useEffect(()=>{
         const fetchInterviews = async()=>{
@@ -23,6 +25,7 @@ function DashboardPage() {
     },[]);
 
     const handleDelete = async(id)=>{
+      
         try{
           await deleteInterview(id);
           setInterviews(interviews.filter(i=>i.id !== id));
@@ -65,17 +68,17 @@ function DashboardPage() {
             <div className="bg-white shadow rounded-lg p-5">
               <p className="text-gray-500">Average Score</p>
               <h2 className="text-2xl font-bold">
-              {
-  (() => {
-    const completed = interviews.filter(i => i.score != null);
-
-    if (completed.length === 0) return "-";
-
-    const total = completed.reduce((sum, i) => sum + Number(i.score), 0);
-
-    return (total / completed.length).toFixed(1);
-  })()
-}
+                {
+                  (() => {
+                    const completed = interviews.filter(i => i.score != null);
+      
+                    if (completed.length === 0) return "-";
+      
+                    const total = completed.reduce((sum, i) => sum + Number(i.score), 0);
+      
+                    return (total / completed.length).toFixed(1);
+                  })()
+                }
               </h2>
             </div>
       
@@ -117,7 +120,10 @@ function DashboardPage() {
                   </button>
       
                   <button
-                    onClick={() => handleDelete(interview.id)}
+                    onClick={() => {
+                      setSelectedInterview(interview.id);
+                      setShowDeleteModal(true);
+                    }}
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                   >
                     Delete
@@ -130,6 +136,49 @@ function DashboardPage() {
             ))}
       
           </div>
+      
+      
+          {/* DELETE MODAL */}
+          {showDeleteModal && (
+      
+            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      
+              <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg">
+      
+                <h2 className="text-xl font-semibold mb-3">
+                  Delete Interview
+                </h2>
+      
+                <p className="text-gray-600 mb-6">
+                  Are you sure you want to delete this interview?
+                </p>
+      
+                <div className="flex justify-end gap-3">
+      
+                  <button
+                    onClick={() => setShowDeleteModal(false)}
+                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+      
+                  <button
+                    onClick={() => {
+                      handleDelete(selectedInterview);
+                      setShowDeleteModal(false);
+                    }}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+      
+                </div>
+      
+              </div>
+      
+            </div>
+      
+          )}
       
         </div>
       );

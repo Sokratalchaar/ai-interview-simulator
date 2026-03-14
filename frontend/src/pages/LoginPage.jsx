@@ -18,7 +18,7 @@ function LoginPage() {
         localStorage.setItem("email", email);
     
         console.log("Token:", data.token);
-        navigate("/dashboard");
+        navigate("/welcome");
     
       } catch (error) {
     
