@@ -323,6 +323,13 @@ exports.getInterviewScore = async(req,res)=>{
      const total = scores.reduce((sum,s)=> sum + s ,0);
      const average = (total / scores.length).toFixed(1);
 
+     await prisma.interviewSession.update({
+      where: { id: Number(id) },
+      data: {
+        status: "COMPLETED"
+      }
+    });
+
      res.json({
       interviewId: session.id,
       score: average

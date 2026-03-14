@@ -8,7 +8,7 @@ import StartInterviewPage from "./pages/StartInterviewPage";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
-
+import WelcomePage from "./pages/WelcomePage";
 
 function App() {
   return (
@@ -21,6 +21,8 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
 
       <Route path="/register" element={<RegisterPage />} />
+
+      <Route path="/welcome" element={<WelcomePage />} />
 
       <Route
   path="/dashboard"

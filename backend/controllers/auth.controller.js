@@ -38,8 +38,20 @@ exports.register = async(req,res)=>{
         });
         res.json({message:"user created successfully"});
     } catch (error) {
-        res.status(400).json({ error: "Email already exists" });
+
+      if (error.code === "P2002") {
+        return res.status(400).json({
+          error: "Email already exists"
+        });
       }
+    
+      console.log(error);
+    
+      res.status(500).json({
+        error: "Server error"
+      });
+    
+    }
 };
 
 exports.login = async(req,res)=>{

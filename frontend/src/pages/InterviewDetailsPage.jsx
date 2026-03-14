@@ -22,47 +22,63 @@ function InterviewDetailsPage(){
         return <p>Loading...</p>;
       }
 
-      return(
-        <div className="min-h-screen bg-gray-100 p-8">
+      return (
+        <div className="min-h-screen bg-gray-50">
       
-          <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-md">
+          <div className="max-w-5xl mx-auto px-6 py-12">
       
-            <h1 className="text-2xl font-bold mb-6 text-center">
+            <h1 className="text-3xl font-bold mb-10">
               Interview #{interview.id}
             </h1>
       
-            <div className="space-y-6">
+            <div className="space-y-10">
       
               {interview.questions.map((q,index)=>(
+                
                 <div
                   key={q.id}
-                  className="border border-gray-200 p-4 rounded-lg bg-gray-50"
+                  className="border-b pb-8"
                 >
       
-                  <h3 className="font-semibold mb-2">
+                  <h2 className="text-xl font-semibold mb-3">
                     Question {index+1}
-                  </h3>
+                  </h2>
       
-                  <p className="mb-3 text-gray-800">
+                  <p className="text-gray-800 mb-6 leading-relaxed">
                     {q.content}
                   </p>
       
-                  <p className="mb-2">
-                    <b>Your answer:</b> {q.answer?.content}
-                  </p>
       
-                  <p className="mb-2">
-                    <b>Score:</b>
-                    <span className="ml-2 bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                      {q.answer?.score}
-                    </span>
-                  </p>
+                  <div className="bg-white border rounded-xl p-5">
       
-                  <p className="text-gray-700">
-                    <b>Feedback:</b> {q.answer?.feedback}
-                  </p>
+                    <p className="mb-3">
+                      <span className="font-semibold">Your answer:</span>
+                      <span className="ml-2 text-gray-700">
+                        {q.answer?.content}
+                      </span>
+                    </p>
+      
+      
+                    <p className="mb-3 flex items-center gap-2">
+                      <span className="font-semibold">Score:</span>
+      
+                      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-sm font-medium">
+                        {q.answer?.score} / 10
+                      </span>
+                    </p>
+      
+      
+                    <p className="text-gray-700 leading-relaxed">
+                      <span className="font-semibold">Feedback:</span>
+                      <span className="ml-2">
+                        {q.answer?.feedback}
+                      </span>
+                    </p>
+      
+                  </div>
       
                 </div>
+      
               ))}
       
             </div>
