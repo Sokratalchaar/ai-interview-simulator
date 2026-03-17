@@ -1,11 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import ReactCountryFlag from "react-country-flag";
+
+
+
 
 function Navbar() {
 
 
    const [open,setOpen] = useState(false);
    const email = localStorage.getItem("email");
+   const { i18n } = useTranslation();
+   const [openLang, setOpenLang] = useState(false);
+const [lang, setLang] = useState("en");
 
   const navigate = useNavigate();
 
@@ -26,6 +34,70 @@ function Navbar() {
         >
           AI Interview
         </h1>
+        <div className="relative">
+
+  <button
+    onClick={() => setOpenLang(!openLang)}
+    className="flex items-center gap-2 border rounded-lg px-3 py-1 hover:bg-gray-100"
+  > 
+    {lang === "en" && (
+      <ReactCountryFlag countryCode="GB" svg style={{ width: "20px", height: "20px" }} />
+    )}
+    {lang === "fr" && (
+      <ReactCountryFlag countryCode="FR" svg style={{ width: "20px", height: "20px" }} />
+    )}
+    {lang === "ar" && (
+      <ReactCountryFlag countryCode="SA" svg style={{ width: "20px", height: "20px" }} />
+    )}
+    <span className="uppercase">{lang}</span>
+    <span className="text-xs">▼</span>
+
+    
+  </button>
+
+  {openLang && (
+    <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-lg w-40">
+
+      <button
+        onClick={() => {
+          i18n.changeLanguage("en");
+          setLang("en");
+          setOpenLang(false);
+        }}
+        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
+      >
+        <ReactCountryFlag countryCode="GB" svg style={{ width: "20px", height: "20px" }} />
+        English
+      </button>
+
+      <button
+        onClick={() => {
+          i18n.changeLanguage("fr");
+          setLang("fr");
+          setOpenLang(false);
+        }}
+        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
+      >
+        <ReactCountryFlag countryCode="FR" svg style={{ width: "20px", height: "20px" }} />
+        Français
+      </button>
+
+      <button
+        onClick={() => {
+          i18n.changeLanguage("ar");
+          setLang("ar");
+          setOpenLang(false);
+        }}
+        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
+      >
+        <ReactCountryFlag countryCode="SA" svg style={{ width: "20px", height: "20px" }} />
+        العربية
+      </button>
+
+    </div>
+  )}
+
+</div>
 
         <div className="flex gap-6 items-center">
 
