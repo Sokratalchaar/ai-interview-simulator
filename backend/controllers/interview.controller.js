@@ -236,6 +236,14 @@ exports.answerQuestion = async(req, res)=>{
 exports.evaluateAnswer = async(req,res)=>{
   try{
     const { id: questionId } = req.params;
+    const { language } = req.body;
+
+    const langMap = {
+      en: "English",
+      fr: "French",
+      ar: "Arabic"
+    };
+    const selectedLang = langMap[language] || "English";
     const answer = await prisma.answer.findUnique({
       where:{
         questionId: Number(questionId),
@@ -259,11 +267,22 @@ exports.evaluateAnswer = async(req,res)=>{
       messages: [
         {
           role: "system",
-          content: "You are an interview evaluator. Give a score from 1 to 10 and short feedback."
+          content: `You are an interview evaluator.
+Respond ONLY in ${selectedLang}.
+Give a score from 1 to 10.
+Then give short feedback.
+IMPORTANT:
+- Keep technical terms in English (like Node.js, SQL, API, JSON)
+- Wrap any English word with this format: <ltr>WORD</ltr>
+
+Format EXACTLY like this:
+Score: X
+Feedback: ...`
         },
         {
           role: "user",
-          content: `Evaluate this answer: ${answer.content}`
+          content: `Question: ${answer.question.content}
+Answer: ${answer.content}`
         }
       ],
     });
