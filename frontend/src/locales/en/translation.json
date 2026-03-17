@@ -1,0 +1,40 @@
+{
+    "dashboard": "Dashboard",
+    "startInterview": "Start Interview",
+    "profile": "Profile",
+    "logout": "Logout",
+    "viewDetails":"View Details",
+    "delete":"Delete",
+    "deleteInterview":"Delete Interview",
+    "interview":"Interview",
+    "question":"question",
+  
+    "totalInterviews": "Total Interviews",
+    "completed": "Completed",
+    "notCompleted": "Not completed",
+    "averageScore": "Average Score",
+  
+    "role": "Role",
+    "level": "Level",
+    "techStack": "Tech Stack",
+    "selectLevel": "Select Level",
+  
+    "aiQuestion": "AI Question",
+    "writeAnswer": "Write your answer...",
+    "submitAnswer": "Submit Answer",
+    "endInterview": "End Interview",
+  
+    "confirmEndInterview": "Are you sure you want to end the interview?",
+    "cancel": "Cancel",
+  
+    "evaluatingAnswer": "Evaluating your answer...",
+    "nextQuestion": "Next Question",
+  
+    "interviewFinished": "Interview Finished",
+    "finalScore": "Final Score",
+  
+    "score": "Score",
+    "feedback": "Feedback",
+  
+    "previousInterviews": "Your Previous Interviews"
+  }
