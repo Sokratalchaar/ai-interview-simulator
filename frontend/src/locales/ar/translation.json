@@ -1,0 +1,40 @@
+{
+    "dashboard": "لوحة التحكم",
+    "startInterview": "بدء المقابلة",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "viewDetails":"عرض التفاصيل",
+    "delete":"مسح",
+    "deleteInterview":"مسح المقابلة",
+    "interview":"المقابلة",
+    "question":"السؤال",
+  
+    "totalInterviews": "إجمالي المقابلات",
+    "completed": "المكتملة",
+    "notCompleted": "غير مكتملة",
+    "averageScore": "متوسط التقييم",
+  
+    "role": "الدور الوظيفي",
+    "level": "المستوى",
+    "techStack": "التقنيات",
+    "selectLevel": "اختر المستوى",
+  
+    "aiQuestion": "سؤال الذكاء الاصطناعي",
+    "writeAnswer": "اكتب إجابتك...",
+    "submitAnswer": "إرسال الإجابة",
+    "endInterview": "إنهاء المقابلة",
+  
+    "confirmEndInterview": "هل أنت متأكد أنك تريد إنهاء المقابلة؟",
+    "cancel": "إلغاء",
+  
+    "evaluatingAnswer": "جاري تقييم إجابتك...",
+    "nextQuestion": "السؤال التالي",
+  
+    "interviewFinished": "انتهت المقابلة",
+    "finalScore": "النتيجة النهائية",
+  
+    "score": "التقييم",
+    "feedback": "الملاحظات",
+  
+    "previousInterviews": "المقابلات السابقة"
+  }

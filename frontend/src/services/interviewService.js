@@ -32,11 +32,11 @@ export const submitAnswer = async(questionId,answer)=>{
     return response.data;
 }
 
-export const evaluateAnswer = async(questionId)=>{
+export const evaluateAnswer = async(questionId,data)=>{
     const token = localStorage.getItem("token");
     const response = await axios.post(
         `${API}/question/${questionId}/evaluate`,
-        {},
+        data,
         {
             headers: {
               Authorization: `Bearer ${token}`

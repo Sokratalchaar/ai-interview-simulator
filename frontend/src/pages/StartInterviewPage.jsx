@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { startInterview } from "../services/interviewService";
+import { useTranslation } from "react-i18next";
+import { Languages } from "lucide-react";
+
 
 function StartInterviewPage(){
+  const { t, i18n } = useTranslation();
 
  const [role,setRole] = useState("");
  const [level,setLevel] = useState("");
@@ -17,7 +21,8 @@ function StartInterviewPage(){
     const data = await startInterview({
       role,
       level,
-      tech
+      tech,
+      language: i18n.language
     });
 
     navigate("/interview", {
@@ -55,7 +60,7 @@ function StartInterviewPage(){
           {/* Role */}
           <div>
             <label className="block text-sm font-semibold mb-2">
-              Role
+              {t("role")}
             </label>
 
             <input
@@ -70,7 +75,7 @@ function StartInterviewPage(){
           {/* Level */}
           <div>
             <label className="block text-sm font-semibold mb-2">
-              Level
+              {t("level")}
             </label>
 
             <select
@@ -78,7 +83,7 @@ function StartInterviewPage(){
               onChange={(e)=>setLevel(e.target.value)}
               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Select Level</option>
+              <option value="">{t("selectLevel")}</option>
               <option value="Junior">Junior</option>
               <option value="Mid">Mid</option>
               <option value="Senior">Senior</option>
@@ -89,7 +94,7 @@ function StartInterviewPage(){
           {/* Tech Stack */}
           <div className="md:col-span-2">
             <label className="block text-sm font-semibold mb-2">
-              Tech Stack
+              {t("techStack")}
             </label>
 
             <input
@@ -108,7 +113,7 @@ function StartInterviewPage(){
           disabled={!role || !level || !tech}
           className="w-full mt-8 bg-blue-600 text-white py-3 rounded-lg text-lg hover:bg-blue-700 transition disabled:bg-gray-400"
         >
-          Start Interview
+          {t("startInterview")}
         </button>
 
       </div>

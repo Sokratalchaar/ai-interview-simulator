@@ -1,0 +1,40 @@
+{
+    "dashboard": "Tableau de bord",
+    "startInterview": "Commencer l'entretien",
+    "profile": "Profil",
+    "logout": "Se déconnecter",
+    "viewDetails":"Voir les details",
+    "delete":"Supprimer",
+    "deleteInterview":"Supprimer l'interview",
+    "interview":"Interview",
+    "question":"question",
+  
+    "totalInterviews": "Nombre total d'entretiens",
+    "completed": "Terminés",
+    "notCompleted": "Non terminés",
+    "averageScore": "Score moyen",
+  
+    "role": "Rôle",
+    "level": "Niveau",
+    "techStack": "Technologies",
+    "selectLevel": "Sélectionner le niveau",
+  
+    "aiQuestion": "Question IA",
+    "writeAnswer": "Écrivez votre réponse...",
+    "submitAnswer": "Soumettre la réponse",
+    "endInterview": "Terminer l'entretien",
+  
+    "confirmEndInterview": "Êtes-vous sûr de vouloir terminer l'entretien ?",
+    "cancel": "Annuler",
+  
+    "evaluatingAnswer": "Évaluation de votre réponse...",
+    "nextQuestion": "Question suivante",
+  
+    "interviewFinished": "Entretien terminé",
+    "finalScore": "Score final",
+  
+    "score": "Score",
+    "feedback": "Feedback",
+  
+    "previousInterviews": "Vos entretiens précédents"
+  }
