@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getMyInterviews,deleteInterview } from "../services/interviewService";
+import { useTranslation } from "react-i18next";
+
 
 
 function DashboardPage() {
+   const {t} = useTranslation();
     const navigate = useNavigate();
     const [showDeleteModal,setShowDeleteModal] = useState(false);
     const [selectedInterview,setSelectedInterview] = useState(null);
@@ -34,11 +37,13 @@ function DashboardPage() {
         }
       }
 
+      
+
 
       return (
         <div className="max-w-6xl mx-auto">
       
-          <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+          <h1 className="text-3xl font-bold mb-6">{t("dashboard")}</h1>
       
           {/* Start Interview */}
           <div className="mb-8">
@@ -46,7 +51,7 @@ function DashboardPage() {
               onClick={() => navigate("/start-interview")}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
             >
-              Start Interview
+              {t("startInterview")}
             </button>
           </div>
       
@@ -54,19 +59,19 @@ function DashboardPage() {
           <div className="grid grid-cols-3 gap-6 mb-10">
       
             <div className="bg-white shadow rounded-lg p-5">
-              <p className="text-gray-500">Total Interviews</p>
+              <p className="text-gray-500">{t("totalInterviews")}</p>
               <h2 className="text-2xl font-bold">{interviews.length}</h2>
             </div>
       
             <div className="bg-white shadow rounded-lg p-5">
-              <p className="text-gray-500">Completed</p>
+              <p className="text-gray-500">{t("completed")}</p>
               <h2 className="text-2xl font-bold">
                 {interviews.filter(i => i.score !== null).length}
               </h2>
             </div>
       
             <div className="bg-white shadow rounded-lg p-5">
-              <p className="text-gray-500">Average Score</p>
+              <p className="text-gray-500">{t("averageScore")}</p>
               <h2 className="text-2xl font-bold">
                 {
                   (() => {
@@ -85,38 +90,40 @@ function DashboardPage() {
           </div>
       
           {/* Interview History */}
-          <h2 className="text-xl font-semibold mb-4">Your Previous Interviews</h2>
+          <h2 className="text-xl font-semibold mb-4">{t("previousInterviews")}</h2>
       
           <div className="space-y-4">
       
-            {interviews.map((interview) => (
-      
+            {interviews.map((interview,index) => (
+             
               <div
                 key={interview.id}
                 className="bg-white shadow rounded-lg p-5 flex justify-between items-center"
               >
       
                 <div>
-                  <h3 className="font-semibold">Interview #{interview.id}</h3>
+                  <h3 className="font-semibold">Interview #{interviews.length - index}</h3>
                   <p className="text-gray-500">
                     {new Date(interview.createdAt).toLocaleDateString()}
                   </p>
       
                   <p className="mt-1">
-                    Score:{" "}
+                    {t("score")}:{" "}
                     {interview.score !== null
                       ? `${interview.score} / 10`
-                      : "Not completed"}
+                      : t("notCompleted")}
                   </p>
                 </div>
       
                 <div className="flex gap-3">
       
                   <button
-                    onClick={() => navigate(`/interview/${interview.id}`)}
+                    onClick={() => navigate(`/interview/${interview.id}`,{
+                    state:{interviewNumber: interviews.length - index}
+                    })}
                     className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
                   >
-                    View Details
+                    {t("viewDetails")}
                   </button>
       
                   <button
@@ -126,7 +133,7 @@ function DashboardPage() {
                     }}
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                   >
-                    Delete
+                    {t("delete")}
                   </button>
       
                 </div>
@@ -146,11 +153,11 @@ function DashboardPage() {
               <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg">
       
                 <h2 className="text-xl font-semibold mb-3">
-                  Delete Interview
+                  {t("deleteInterview")}
                 </h2>
       
                 <p className="text-gray-600 mb-6">
-                  Are you sure you want to delete this interview?
+                  {t("confirmEndInterview")}
                 </p>
       
                 <div className="flex justify-end gap-3">
@@ -159,7 +166,7 @@ function DashboardPage() {
                     onClick={() => setShowDeleteModal(false)}
                     className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
                   >
-                    Cancel
+                    {t("cancel")}
                   </button>
       
                   <button
@@ -169,7 +176,7 @@ function DashboardPage() {
                     }}
                     className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
                   >
-                    Delete
+                    {t("delete")}
                   </button>
       
                 </div>
