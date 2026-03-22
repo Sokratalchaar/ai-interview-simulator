@@ -8,6 +8,7 @@
     "deleteInterview":"مسح المقابلة",
     "interview":"المقابلة",
     "question":"السؤال",
+    "yourAnswer":"جوابك",
   
     "totalInterviews": "إجمالي المقابلات",
     "completed": "المكتملة",
@@ -23,6 +24,7 @@
     "writeAnswer": "اكتب إجابتك...",
     "submitAnswer": "إرسال الإجابة",
     "endInterview": "إنهاء المقابلة",
+    "gotoDashboard":"الانتقال الى لوحة التحكم",
   
     "confirmEndInterview": "هل أنت متأكد أنك تريد إنهاء المقابلة؟",
     "cancel": "إلغاء",
