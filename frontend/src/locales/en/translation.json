@@ -8,6 +8,7 @@
     "deleteInterview":"Delete Interview",
     "interview":"Interview",
     "question":"question",
+    "yourAnswer":"Your Answer",
   
     "totalInterviews": "Total Interviews",
     "completed": "Completed",
@@ -23,6 +24,7 @@
     "writeAnswer": "Write your answer...",
     "submitAnswer": "Submit Answer",
     "endInterview": "End Interview",
+    "gotoDashboard":"Go To Dashboard",
   
     "confirmEndInterview": "Are you sure you want to end the interview?",
     "cancel": "Cancel",

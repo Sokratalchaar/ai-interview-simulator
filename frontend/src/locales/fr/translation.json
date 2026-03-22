@@ -8,6 +8,7 @@
     "deleteInterview":"Supprimer l'interview",
     "interview":"Interview",
     "question":"question",
+    "yourAnswer":"Your Answer",
   
     "totalInterviews": "Nombre total d'entretiens",
     "completed": "Terminés",
@@ -23,6 +24,7 @@
     "writeAnswer": "Écrivez votre réponse...",
     "submitAnswer": "Soumettre la réponse",
     "endInterview": "Terminer l'entretien",
+    "gotoDashboard":"Go To Dashboard",
   
     "confirmEndInterview": "Êtes-vous sûr de vouloir terminer l'entretien ?",
     "cancel": "Annuler",

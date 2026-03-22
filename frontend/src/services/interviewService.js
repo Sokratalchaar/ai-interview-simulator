@@ -91,3 +91,15 @@ export const deleteInterview = async (id)=>{
   
     return res.data;
   };
+
+  export const getNextQuestion = async (data) => {
+    const token = localStorage.getItem("token");
+    const res = await axios.post("http://localhost:5000/api/interview/next-question", data,
+        {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+    );
+    return res.data;
+  };

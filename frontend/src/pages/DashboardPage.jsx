@@ -102,7 +102,7 @@ function DashboardPage() {
               >
       
                 <div>
-                  <h3 className="font-semibold">Interview #{interviews.length - index}</h3>
+                  <h3 className="font-semibold">{t("interview")} #{interviews.length - index}</h3>
                   <p className="text-gray-500">
                     {new Date(interview.createdAt).toLocaleDateString()}
                   </p>
