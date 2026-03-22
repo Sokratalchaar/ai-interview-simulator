@@ -8,40 +8,144 @@ const openai = require("../lib/openai");
 
 exports.startInterview = async (req, res) => {
   try {
-    const{ role, level, tech } =req.body;
+    const{ role, level, tech, language } =req.body;
+    const langMap = {
+      en: "English",
+      fr: "French",
+      ar: "Arabic"
+    };
+    const selectedLang = langMap[language] || "English";
     const completion = await openai.chat.completions.create({
       model:"gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are a technical interviewer."
+          content: `
+You are an AI interviewer.
+
+Generate technical interview questions.
+
+IMPORTANT:
+- The questions MUST be in ${selectedLang}
+- Even if the input (role, tech) is in English, translate and respond in ${selectedLang}
+- Keep technical terms (Node.js, API, SQL) in English
+
+Return clear questions.
+
+Role: ${role}
+Tech Stack: ${tech}
+Level: ${level}
+`
         },
         {
           role: "user",
-          content: `Generate 3 interview questions for a ${level} ${role} specializating in ${tech}. Return only the questions.`
+          content: `Generate 1 interview questions for a ${level} ${role} specializating in ${tech}. Return only the questions.`
         }
       ]
     });
-    const aiQuestions = completion.choices[0].message.content.split("\n").filter(q=>q.trim()!=="");
+    const questionText = completion.choices[0].message.content.trim();
     const session = await prisma.interviewSession.create({
       data: {
         status: "STARTED",
         userId: req.userId,
         questions : {
-          create : aiQuestions.map(q=>({
-            content: q
-          }))
+          create : {
+            content: questionText
+          }
         }
       },
       include: {
         questions: true
       }
     });
-    res.status(201).json(session);
+    res.json({
+      question: session.questions[0],
+      sessionId: session.id
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to create session" });
   }};
+
+  exports.generateNextQuestion = async (req, res) => {
+    try {
+      const { sessionId, previousQuestion, answer, role, level, tech, language,score,questionCount} = req.body;
+  
+      const langMap = {
+        en: "English",
+        fr: "French",
+        ar: "Arabic"
+      };
+  
+      const selectedLang = langMap[language] || "English";
+  
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `
+ You are an AI technical interviewer.
+
+You MUST adapt the next question based on the candidate's answer quality.
+
+Rules:
+- If answer is weak → ask easier or clarifying question
+- If answer is good → ask deeper follow-up
+- If answer is excellent → increase difficulty
+
+Language: ${selectedLang}
+
+Keep technical terms in English.
+
+Be natural like a real interviewer.
+      `
+    },
+    {
+      role: "user",
+      content: `
+Previous Question:
+${previousQuestion}
+
+Candidate Answer:
+${answer}
+
+candidate Score: ${score}/10
+
+Generate ONE next question.
+Return ONLY the question.
+Current number of questions: ${questionCount}
+
+IMPORTANT:
+- NEVER end the interview before 5 questions
+- Only return END if questionCount >= 5
+      `
+    }
+        ]
+      });
+  
+      const question = completion.choices[0].message.content.trim();
+      if (question === "END") {
+        return res.json({ done: true });
+      }
+      
+      
+  
+      // خزّن السؤال بالداتابيس
+      const newQuestion = await prisma.question.create({
+        data: {
+          content: question,
+          sessionId: Number(sessionId)
+        }
+      });
+  
+      res.json(newQuestion);
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to generate next question" });
+    }
+  };
 
   exports.getUserInterviews = async (req,res)=>{
     try{
@@ -236,7 +340,7 @@ exports.answerQuestion = async(req, res)=>{
 exports.evaluateAnswer = async(req,res)=>{
   try{
     const { id: questionId } = req.params;
-    const { language } = req.body;
+    const { language,timeTaken } = req.body;
 
     const langMap = {
       en: "English",
@@ -282,7 +386,12 @@ Feedback: ...`
         {
           role: "user",
           content: `Question: ${answer.question.content}
-Answer: ${answer.content}`
+Answer: ${answer.content}
+Answer Time: ${timeTaken} seconds
+
+If the answer is too fast and very good,
+mention suspicion in feedback.
+`
         }
       ],
     });
