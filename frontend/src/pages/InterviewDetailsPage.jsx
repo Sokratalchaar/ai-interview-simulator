@@ -40,7 +40,8 @@ function InterviewDetailsPage(){
       
           <div className="max-w-5xl mx-auto px-6 py-12">
       
-            <h1 className="text-3xl font-bold mb-10">
+            <h1  dir="auto"
+  className="text-gray-800 mb-6 leading-relaxed unicode-fix font-bold">
             {t("interview")} #{interviewNumber}
             </h1>
       
@@ -53,13 +54,14 @@ function InterviewDetailsPage(){
                   className="border-b pb-8"
                 >
       
-                  <h2 className="text-xl font-semibold mb-3">
+                  <h2 dir="auto"
+  className="text-gray-800 mb-6 leading-relaxed unicode-fix font-bold">
                     {t("question")} {index+1}
                   </h2>
       
                   <p
   dir="auto"
-  className="text-gray-800 mb-6 leading-relaxed unicode-fix"
+  className="text-gray-800 mb-6 leading-relaxed unicode-fix font-bold"
 >
   {q.content}
 </p>
@@ -67,15 +69,17 @@ function InterviewDetailsPage(){
       
                   <div className="bg-white border rounded-xl p-5">
       
-                    <p className="mb-3">
-                      <span className="font-semibold">{t("youAnswer")}:</span>
-                      <span className="ml-2 text-gray-700">
+                    <p dir="auto"
+  className="text-gray-800 mb-6 leading-relaxed unicode-fix">
+                      <span className="font-semibold ">{t("yourAnswer")}:</span>
+                      <span className="ml-2 text-gray-700 ">
                         {q.answer?.content}
                       </span>
                     </p>
       
       
-                    <p className="mb-3 flex items-center gap-2">
+                    <p dir="auto"
+  className="text-gray-800 mb-6 leading-relaxed unicode-fix">
                       <span className="font-semibold">{t("score")}:</span>
       
                       <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-sm font-medium">
@@ -84,10 +88,11 @@ function InterviewDetailsPage(){
                     </p>
       
       
-                    <p className="text-gray-700 leading-relaxed">
+                    <p dir="auto"
+  className="text-gray-800 mb-6 leading-relaxed unicode-fix">
                       <span className="font-semibold">{t("feedback")}:</span>
                       <span
-                       dir="rtl"
+                       dir="auto"
                        className="ml-2"
                        dangerouslySetInnerHTML={{
                        __html: formatText(q.answer?.feedback)
