@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { startInterview,submitAnswer,evaluateAnswer,getInterviewScore,getMyInterviews } from "../services/interviewService";
+import { startInterview,submitAnswer,evaluateAnswer,getInterviewScore,getMyInterviews,getNextQuestion } from "../services/interviewService";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
@@ -15,23 +15,37 @@ function InterviewPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const [interviewEnded,setInterviewEnded] = useState(false);
-    const { questions: initialQuestions,sessionId: initialSessionId } = location.state || {};
-    const [questions,setQuestions]=useState(initialQuestions || []);
+   
     const [currentIndex,setCurrentIndex] = useState(0);
     const [answer,setAnswer] = useState("");
     const [score, setScore] = useState(null);
     const [feedback, setFeedback] = useState("");
-    const [sessionId,setSessionId] = useState(initialSessionId || null);
+   
     const [finalScore,setFinalScore] = useState(null);
     const [loading,setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [showEndModal,setShowEndModal] = useState(false);
     const [timeLeft,setTimeLeft] = useState(60);
     const [recording, setRecording] = useState(false);
-const [recordTime, setRecordTime] = useState(0);
+    const [startTime, setStartTime] = useState(null);
+    const config = JSON.parse(localStorage.getItem("interviewConfig") || "{}");
 
-const mediaRecorderRef = useRef(null);
-const audioChunksRef = useRef([]);
+    const {
+      questions: stateQuestions,
+      sessionId: stateSessionId,
+      role: stateRole,
+      level: stateLevel,
+      tech: stateTech
+    } = location.state || {};
+    const initialQuestions = stateQuestions || [];
+    const initialSessionId = stateSessionId;
+    
+    const role = stateRole || config.role;
+    const level = stateLevel || config.level;
+    const tech = stateTech || config.tech;
+    const [questions,setQuestions] = useState(initialQuestions);
+const [sessionId,setSessionId] = useState(initialSessionId);
+
 const waveformRef = useRef(null);
 const waveSurferRef = useRef(null);
 const recognitionRef = useRef(null);
@@ -46,14 +60,9 @@ const recognitionRef = useRef(null);
      useEffect(()=>{
 
       if(submitted) return;
-
-      if(timeLeft === 0){
-        handleNextQuestion();
-        return;
-      }
     
       const timer = setTimeout(()=>{
-        setTimeLeft(timeLeft - 1);
+        setTimeLeft(prev=>prev - 1);
       },1000);
     
       return () => clearTimeout(timer);
@@ -63,50 +72,82 @@ const recognitionRef = useRef(null);
     
 
 
-    const handleNextQuestion = async() => {
-
-      if(currentIndex < questions.length - 1){
+    const handleNextQuestion = async () => {
+      try {
+        setLoading(true);
     
-        setCurrentIndex(currentIndex + 1);
-        setAnswer("");
-        setScore(null);
-        setFeedback("");
-        setSubmitted(false);
+        const currentQuestion = questions[currentIndex];
     
-        setTimeLeft(60);
+        const newQuestion = await getNextQuestion({
+          sessionId,
+          previousQuestion: currentQuestion.content,
+          answer,
+          score,
+          questionCount: questions.length,
+          role,
+          level,
+          tech,
+          language: i18n.language
+        });
     
+        // 🟥 إذا انتهت المقابلة
+        if (newQuestion?.done) {
+          const result = await getInterviewScore(sessionId);
+          setFinalScore(result.score);
+          setInterviewEnded(true);
+          return;
+        }
+    
+        // 🟩 إذا في سؤال جديد
+        if (newQuestion?.content) {
+          setQuestions(prev => [...prev, newQuestion]);
+          setCurrentIndex(prev => prev + 1);
+    
+          // reset state للسؤال الجديد
+          setAnswer("");
+          setScore(null);
+          setFeedback("");
+          setSubmitted(false);
+          setTimeLeft(60);
+        }
+    
+        // 🟨 fallback (احتياط)
+        else {
+          const result = await getInterviewScore(sessionId);
+          setFinalScore(result.score);
+          setInterviewEnded(true);
+          localStorage.removeItem("interviewSession");
+        }
+    
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
-      else {
-
-        const result = await getInterviewScore(sessionId);
-        setFinalScore(result.score);
-        setInterviewEnded(true);
-        localStorage.removeItem("interviewSession");
-    
-      }
-    
     };
+    useEffect(() => {
+      setStartTime(Date.now());
+    }, [currentIndex]);
+
+     
 
      const handleSubmit = async () =>{
       if(submitted) return;
       try{
         setSubmitted(true);
         setLoading(true);
+        const timeTaken = (Date.now() - startTime) / 1000;
         const questionId = questions[currentIndex].id;
-        await submitAnswer(questionId,answer);
+        await submitAnswer(questionId,answer,timeTaken);
         const result = await evaluateAnswer(questionId,{
-          language: i18n.language
+          language: i18n.language,
+          timeTaken
         });
         
         setScore(result.score);
         setFeedback(result.feedback);
         setLoading(false);
-        if(currentIndex===questions.length-1){
-          const interviewResult = await getInterviewScore(sessionId);
-          setFinalScore(interviewResult.score);
-          localStorage.removeItem("interviewSession");
-
-        }
+        
       } catch (error) {
 
         console.error(error);
@@ -151,7 +192,12 @@ const recognitionRef = useRef(null);
       const recognition = new SpeechRecognition();
     
       recognition.continuous = true;
-      recognition.lang = "en-US";
+      recognition.lang =
+      i18n.language === "ar"
+        ? "ar-SA"
+        : i18n.language === "fr"
+        ? "fr-FR"
+        : "en-US";
     
       recognition.onresult = (event) => {
     
@@ -172,7 +218,7 @@ const recognitionRef = useRef(null);
 
       recognitionRef.current?.stop();
     
-      waveSurferRef.current?.microphone.stop();
+      waveSurferRef.current?.microphone?.stop();
     
       setRecording(false);
     
@@ -182,7 +228,7 @@ const recognitionRef = useRef(null);
 
       recognitionRef.current?.stop();
     
-      waveSurferRef.current?.microphone.stop();
+      waveSurferRef.current?.microphone?.stop();
     
       waveSurferRef.current?.destroy();
     
@@ -198,6 +244,10 @@ const recognitionRef = useRef(null);
         '<span dir="ltr">$1</span>'
       );
     };
+
+  
+    
+    
 
      return (
       <div className="min-h-screen bg-gray-50">
@@ -274,6 +324,10 @@ const recognitionRef = useRef(null);
   value={answer}
   placeholder="Write your answer..."
   onChange={(e)=>setAnswer(e.target.value)}
+  onPaste={(e)=>e.preventDefault()}
+  onCopy={(e)=>e.preventDefault()}
+  onCut={(e)=>e.preventDefault()}
+  onContextMenu={(e)=>e.preventDefault()}
   className="w-full border border-gray-300 rounded-2xl p-4 pr-28 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
 />
 
@@ -347,24 +401,35 @@ const recognitionRef = useRef(null);
           )}
     
     
-          {score && (
-            <div className="mt-8 bg-gray-100 p-6 rounded-xl">
+    {score && (
+  <div className="mt-8 bg-gray-100 p-6 rounded-xl">
+
+    <h3
+      dir="auto"
+      className="text-gray-800 mb-6 leading-relaxed unicode-fix"
+    >
+      <span className="font-bold">{t("score")}:</span>{" "}
+      
+      <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+        {score} / 10
+      </span>
+    </h3>
+
+    <p dir="auto" className="text-gray-700">
+      <span className="font-bold">{t("feedback")}:</span>
+    </p>
+
+    <div
+      dir="auto"
+      className="text-gray-700 leading-relaxed unicode-fix"
+      dangerouslySetInnerHTML={{ __html: formatText(feedback) }}
+    />
+
+  </div>
+)}
     
-              <h3 className="font-semibold mb-2">
-                {t("score")}: {score} / 10
-              </h3>
     
-              <p
-  dir="rtl"
-  className="text-gray-700"
-  dangerouslySetInnerHTML={{ __html: formatText(feedback) }}
-/>
-    
-            </div>
-          )}
-    
-    
-          {score && currentIndex < questions.length - 1 && (
+          {score!==null && !interviewEnded && (
             <button
               onClick={handleNextQuestion}
                
@@ -375,7 +440,7 @@ const recognitionRef = useRef(null);
           )}
     
     
-          {(interviewEnded || (score && currentIndex === questions.length - 1)) && (
+          {interviewEnded &&(
     
             <div className="mt-10 text-center">
     
