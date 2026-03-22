@@ -14,9 +14,16 @@ function StartInterviewPage(){
 
  const navigate = useNavigate();
 
+
  const handleStart = async () => {
 
   try {
+
+    localStorage.setItem("interviewConfig", JSON.stringify({
+      role,
+      level,
+      tech
+    }));
 
     const data = await startInterview({
       role,
@@ -27,8 +34,11 @@ function StartInterviewPage(){
 
     navigate("/interview", {
       state: {
-        questions: data.questions,
-        sessionId: data.id
+        questions: [data.question],
+        sessionId: data.sessionId,
+        role,
+        level,
+        tech
       
       }
     });
