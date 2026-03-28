@@ -167,12 +167,19 @@ IMPORTANT:
      
       const result = interviews.map(interview=>{
       const scores = interview.questions.map(q=>q.answer?.score).filter(score => score !== null && score !== undefined);
+      console.log("ID:", interview.id);         // 👈 هون
+      console.log("SCORES:", scores);
       const total=scores.reduce((sum,s)=>sum + s ,0);
-      const average = scores.length? (total/scores.length).toFixed(1):null;
+      const average = scores.length
+      ? Math.round((total / scores.length) * 10) / 10
+      : null;
+      console.log("AVG:", average);             // 👈 هون
+      console.log("------");
       return{
         id:interview.id,
         createdAt:interview.createdAt,
-        score:average
+        score:average,
+        completed:scores.length > 0
       };
     });
     res.json(result);
@@ -389,7 +396,7 @@ Feedback: ...`
 Answer: ${answer.content}
 Answer Time: ${timeTaken} seconds
 
-If the answer is too fast and very good,
+If the answer is too fast (${timeTaken}< 5 sec) and very good,
 mention suspicion in feedback.
 `
         }
@@ -468,3 +475,237 @@ exports.getInterviewScore = async(req,res)=>{
      res.status(500).json({error:"Failed to calculate score"});
     }
 }
+
+
+exports.getDashboardStats = async (req, res) => {
+  try {
+    const interviews = await prisma.interviewSession.findMany({
+      where: { userId: req.userId },
+      include: {
+        questions: {
+          include: {
+            answer: true
+          }
+        }
+      }
+    });
+
+    let totalInterviews = interviews.length;
+    let completed = 0;
+
+    let interviewScores = []; 
+
+    interviews.forEach(interview => {
+      const scores = interview.questions
+        .map(q => q.answer?.score)
+        .filter(s => s !== null && s !== undefined);
+
+      if (scores.length > 0) {
+        completed++;
+
+        const avg =
+          scores.reduce((a, b) => a + b, 0) / scores.length;
+
+        interviewScores.push(avg); 
+      }
+    });
+
+    const averageScore =
+      interviewScores.length > 0
+        ? (interviewScores.reduce((a, b) => a + b, 0) /
+            interviewScores.length).toFixed(1)
+        : 0;
+
+    const bestScore =
+      interviewScores.length > 0
+        ? Math.max(...interviewScores).toFixed(1)
+        : 0;
+
+    res.json({
+      totalInterviews,
+      completed,
+      averageScore,
+      bestScore
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
+};
+
+
+exports.getAIInsights = async (req, res) => {
+  try {
+    const { range } = req.query;
+ 
+    const interviews = await prisma.interviewSession.findMany({
+      where: { userId: req.userId },
+      include: {
+        questions: {
+          include: {
+            answer: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "asc" // مهم للـ trend
+      }
+    });
+   
+
+const now = new Date();
+
+const filteredInterviews = interviews.filter(interview => {
+  const date = new Date(interview.createdAt);
+  const diffDays = (now - date) / (1000 * 60 * 60 * 24);
+
+  if (range === "week") return diffDays <= 7;
+  if (range === "month") return diffDays <= 30;
+
+  return true;
+});
+
+    // 1️⃣ نحسب average لكل interview
+    const detailedData = filteredInterviews.map(interview => {
+      return interview.questions.map(q => {
+        if (!q.answer || q.answer.score == null) return null;
+    
+        return `
+    Question: ${q.content}
+    Score: ${q.answer.score}
+    Feedback: ${q.answer.feedback || "No feedback"}
+    `;
+      }).filter(Boolean).join("\n");
+    }).join("\n\n");
+
+    if (!detailedData || detailedData.trim() === "") {
+      return res.json({
+        trend: "No data yet",
+        strength: "-",
+        weakness: "-",
+        advice: "Complete interviews to get insights"
+      });
+    }
+
+    // 3️⃣ نطلب تحليل من AI
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `
+You are an AI technical career coach.
+
+IMPORTANT:
+- Respond ONLY in English
+- Keep technical terms in English (Node.js, SQL, API)
+
+Analyze interview performance based on:
+- Questions
+- Scores
+- Feedback
+
+Detect:
+- Strength areas
+- Weak areas
+- Overall trend
+
+Return JSON ONLY in this format:
+{
+  "trend": "...",
+  "strength": "...",
+  "weakness": "...",
+  "advice": "..."
+}
+`
+
+        },
+        {
+          role: "user",
+          content: `
+          Here is the interview data for the last ${range}:
+          
+          ${detailedData}
+          
+          Analyze performance.
+          `
+        }
+      ]
+    });
+
+    const aiText = completion.choices[0].message.content;
+
+    let parsed;
+    try {
+      parsed = JSON.parse(aiText);
+    } catch {
+      console.log("AI RAW:", aiText); // 🔥 debug
+      parsed = {
+        trend: aiText,
+        strength: "",
+        weakness: "",
+        advice: ""
+      };
+    }
+ 
+    res.json(parsed);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to generate insights" });
+  }
+};
+
+exports.translateInsights = async (req, res) => {
+  try {
+    const { insights, language } = req.body;
+
+    const langMap = {
+      ar: "Arabic",
+      fr: "French"
+    };
+
+    const selectedLang = langMap[language] || "English";
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `
+You are a translator.
+
+Translate the following JSON values to ${selectedLang}.
+
+IMPORTANT:
+- Keep JSON format EXACTLY the same
+- Translate ONLY the values, NOT the keys
+- Keep technical terms in English (Node.js, SQL, API)
+
+Return JSON only.
+`
+        },
+        {
+          role: "user",
+          content: JSON.stringify(insights)
+        }
+      ]
+    });
+
+    const aiText = completion.choices[0].message.content;
+
+    let parsed;
+    try {
+      parsed = JSON.parse(aiText);
+    } catch {
+      parsed = insights; // fallback
+    }
+
+    res.json(parsed);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Translation failed" });
+  }
+};
