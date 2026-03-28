@@ -38,5 +38,31 @@
     "score": "Score",
     "feedback": "Feedback",
   
-    "previousInterviews": "Your Previous Interviews"
+    "previousInterviews": "Your Previous Interviews",
+
+    "welcomeTitle": "Welcome to AI Interview",
+    "welcomeSubtitle": "Practice technical interviews powered by AI and improve your skills",
+    "goToDashboard": "Go to Dashboard",
+   
+
+    "trackProgressTitle": "Track Progress",
+    "trackProgressDesc": "View your interview history and monitor your improvement",
+
+    "instantFeedbackTitle": "Instant Feedback",
+    "instantFeedbackDesc": "Get AI evaluation and feedback for every answer you write",
+
+    "aiQuestionsTitle": "AI Questions",
+    "aiQuestionsDesc": "Generate technical interview questions tailored to your role and level",
+
+    "bestScore": "Best Score",
+    "month": "Month",
+    "week": "Week",
+
+    "trend": "Trend",
+    "strength": "Strength",
+    "weakness": "Weakness",
+    "advice": "Advice"
+    
+    
+
   }

@@ -38,5 +38,32 @@
     "score": "التقييم",
     "feedback": "الملاحظات",
   
-    "previousInterviews": "المقابلات السابقة"
+    "previousInterviews": "المقابلات السابقة",
+
+    
+    "welcomeTitle": "مرحبًا بك في AI Interview",
+    "welcomeSubtitle": "تدرّب على المقابلات التقنية باستخدام الذكاء الاصطناعي وطوّر مهاراتك",
+    "goToDashboard": "الذهاب إلى لوحة التحكم",
+    
+    
+    "trackProgressTitle": "تتبع التقدم",
+    "trackProgressDesc": "اطّلع على سجل مقابلاتك وراقب تطورك",
+    
+    "instantFeedbackTitle": "تقييم فوري",
+    "instantFeedbackDesc": "احصل على تقييم وملاحظات من الذكاء الاصطناعي لكل إجابة تكتبها",
+    
+    "aiQuestionsTitle": "أسئلة الذكاء الاصطناعي",
+    "aiQuestionsDesc": "أنشئ أسئلة مقابلات تقنية مخصصة حسب دورك ومستواك",
+
+    "bestScore": "أفضل نتيجة",
+    "month": "شهر",
+    "week": "أسبوع",
+
+    "trend": "الاتجاه",
+    "strength": "نقاط القوة",
+    "weakness": "نقاط الضعف",
+    "advice": "النصيحة"
+    
+    
+    
   }
