@@ -1,31 +1,130 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getMyInterviews,deleteInterview } from "../services/interviewService";
+import { useEffect, useState, useRef } from "react";
+import { getMyInterviews,deleteInterview,getDashboardStats,getAIInsights,translateInsights } from "../services/interviewService";
 import { useTranslation } from "react-i18next";
+import ScoreChart from "../components/ScoreChart";
 
 
 
 function DashboardPage() {
-   const {t} = useTranslation();
+   const [stats, setStats] = useState(null);
+   const [range, setRange] = useState("week");
+   const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [showDeleteModal,setShowDeleteModal] = useState(false);
     const [selectedInterview,setSelectedInterview] = useState(null);
     const [interviews, setInterviews] = useState([]);
+    const [insights, setInsights] = useState(null);
+    const [insightsCache, setInsightsCache] = useState({});
+    const hasFetched = useRef(false);
     useEffect(()=>{
-        const fetchInterviews = async()=>{
+        const fetchData = async()=>{
+          if (hasFetched.current) return;
+
+    hasFetched.current = true;
+
+    console.log("🚀 FETCH ONCE");
             try{
+              console.log("🔥 DASHBOARD useEffect RUNNING");
+              console.log("📦 RANGE:", range);
                 const data = await getMyInterviews();
                 
-                
+
                 setInterviews(data);
+                const statsData = await getDashboardStats(); 
+                setStats(statsData);
+
+                const shouldRefresh = localStorage.getItem("forceInsightsRefresh") === "true";
+
+                const saved = localStorage.getItem(`insightsCache_${range}`);
+                console.log("🧠 SHOULD REFRESH:", shouldRefresh);
+console.log("💾 SAVED CACHE:", saved);
+
+               // 🔥 إذا في refresh → تجاهل الكاش بالكامل
+                if (shouldRefresh) {
+                console.log("🚀 BEFORE API CALL");
+
+                const insightsData = await getAIInsights(range);
+
+                const cache = { en: insightsData };
+
+                setInsightsCache(cache);
+
+                localStorage.setItem(
+               `insightsCache_${range}`,
+                JSON.stringify(cache)
+                );
+
+               localStorage.removeItem("forceInsightsRefresh");
+
+               return;
+               }
+                if (saved) {
+                  console.log("⚡ USING CACHE");
+                  setInsightsCache(JSON.parse(saved));
+                  return;
+                }
+                console.log("🚀 BEFORE API CALL");
+                const insightsData = await getAIInsights(range);
+               
+                const cache = { en: insightsData };
+
+                setInsightsCache(cache);
+
+                localStorage.setItem(
+                  `insightsCache_${range}`,
+                  JSON.stringify(cache)
+                );
             }catch (error) {
 
                 console.error(error);
 
             }
         };
-        fetchInterviews(); 
-    },[]);
+        fetchData(); 
+    },[range]);
+    
+    useEffect(() => {
+      hasFetched.current = false;
+    }, [range]);
+
+    useEffect(() => {
+      const handleTranslation = async () => {
+        if (!insightsCache.en) return;
+    
+        // إذا موجود cache → استخدمه
+        if (insightsCache[i18n.language]) {
+          return;
+        }
+
+       
+        // إذا مش موجود → ترجم
+        const translated = await translateInsights(
+          insightsCache.en,
+          i18n.language
+        );
+    
+        setInsightsCache(prev => {
+          const updated = {
+            ...prev,
+            [i18n.language]: translated
+          };
+        
+          localStorage.setItem(
+            `insightsCache_${range}`,
+            JSON.stringify(updated)
+          );
+        
+          return updated;
+        });
+      };
+    
+      handleTranslation();
+    }, [i18n.language, insightsCache]);
+
+    const currentInsights =
+  insightsCache[i18n.language] || insightsCache.en;
+
 
     const handleDelete = async(id)=>{
       
@@ -39,9 +138,43 @@ function DashboardPage() {
 
       
 
+      const now = new Date();
+
+      const filtered = interviews.filter(i => {
+        if (!i.score) return false;
+      
+        const date = new Date(i.createdAt);
+        const diffDays = (now - date) / (1000 * 60 * 60 * 24);
+      
+        if (range === "week") return diffDays <= 7;
+        if (range === "month") return diffDays <= 30;
+      
+        return true;
+      });
+      
+      let chartData = filtered
+        .map(i => ({
+          date: new Date(i.createdAt).toLocaleString(i18n.language === "ar" ? "ar-EG" : "en-US", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          }),
+          score: Number(i.score)
+        }))
+        .reverse();
+      
+      // ✅ هون الحل
+      if (range === "week") {
+        chartData = chartData.slice(-10);
+      }
+
 
       return (
-        <div className="max-w-6xl mx-auto">
+        <div
+  dir={i18n.language === "ar" ? "rtl" : "ltr"}
+  className="max-w-6xl mx-auto"
+>
       
           <h1 className="text-3xl font-bold mb-6">{t("dashboard")}</h1>
       
@@ -56,38 +189,60 @@ function DashboardPage() {
           </div>
       
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-6 mb-10">
-      
-            <div className="bg-white shadow rounded-lg p-5">
-              <p className="text-gray-500">{t("totalInterviews")}</p>
-              <h2 className="text-2xl font-bold">{interviews.length}</h2>
-            </div>
-      
-            <div className="bg-white shadow rounded-lg p-5">
-              <p className="text-gray-500">{t("completed")}</p>
-              <h2 className="text-2xl font-bold">
-                {interviews.filter(i => i.score !== null).length}
-              </h2>
-            </div>
-      
-            <div className="bg-white shadow rounded-lg p-5">
-              <p className="text-gray-500">{t("averageScore")}</p>
-              <h2 className="text-2xl font-bold">
-                {
-                  (() => {
-                    const completed = interviews.filter(i => i.score != null);
-      
-                    if (completed.length === 0) return "-";
-      
-                    const total = completed.reduce((sum, i) => sum + Number(i.score), 0);
-      
-                    return (total / completed.length).toFixed(1);
-                  })()
-                }
-              </h2>
-            </div>
-      
-          </div>
+          <div className="grid grid-cols-4 gap-6 mb-10">
+
+  <div className="bg-white shadow rounded-lg p-5">
+    <p className="text-gray-500">{t("totalInterviews")}</p>
+    <h2 className="text-2xl font-bold">{stats?.totalInterviews}</h2>
+  </div>
+
+  <div className="bg-white shadow rounded-lg p-5">
+    <p className="text-gray-500">{t("completed")}</p>
+    <h2 className="text-2xl font-bold">{stats?.completed}</h2>
+  </div>
+
+  <div className="bg-white shadow rounded-lg p-5">
+    <p className="text-gray-500">{t("averageScore")}</p>
+    <h2 className="text-2xl font-bold">{stats?.averageScore}</h2>
+  </div>
+
+  <div className="bg-white shadow rounded-lg p-5">
+    <p className="text-gray-500">{t("bestScore")}</p>
+    <h2 className="text-2xl font-bold">{stats?.bestScore}</h2>
+  </div>
+
+</div>
+
+{currentInsights && (
+  <div className="bg-white shadow rounded-lg p-5 mb-6">
+    <h2 className="text-lg font-semibold mb-2">AI Insights</h2>
+
+    <p>📊 {t("trend")}: {currentInsights?.trend}</p>
+    <p>💪 {t("strength")}: {currentInsights?.strength}</p>
+    <p>⚠️ {t("weakness")}: {currentInsights?.weakness}</p>
+    <p>🚀 {t("advice")}: {currentInsights?.advice}</p>
+  </div>
+)}
+<div className="flex gap-2 mb-4">
+  <button
+    onClick={() => setRange("week")}
+    className={`px-3 py-1 rounded ${range === "week" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+  >
+    Week
+  </button>
+
+  <button
+    onClick={() => setRange("month")}
+    className={`px-3 py-1 rounded ${range === "month" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+  >
+    Month
+  </button>
+</div>
+
+<ScoreChart data={chartData} />
+
+<br/>
+
       
           {/* Interview History */}
           <h2 className="text-xl font-semibold mb-4">{t("previousInterviews")}</h2>
