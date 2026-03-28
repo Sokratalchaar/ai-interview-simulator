@@ -95,6 +95,15 @@ const recognitionRef = useRef(null);
           const result = await getInterviewScore(sessionId);
           setFinalScore(result.score);
           setInterviewEnded(true);
+          localStorage.removeItem("insightsCache_week");
+          localStorage.removeItem("insightsCache_month");
+localStorage.setItem("forceInsightsRefresh", "true");
+
+
+  navigate("/dashboard");
+
+
+
           return;
         }
     
@@ -117,6 +126,13 @@ const recognitionRef = useRef(null);
           setFinalScore(result.score);
           setInterviewEnded(true);
           localStorage.removeItem("interviewSession");
+          localStorage.removeItem("insightsCache_week");
+localStorage.removeItem("insightsCache_month");
+localStorage.setItem("forceInsightsRefresh", "true");
+
+
+  navigate("/dashboard");
+
         }
     
       } catch (error) {
@@ -496,6 +512,7 @@ const recognitionRef = useRef(null);
                     await getInterviewScore(sessionId);
 
                     localStorage.removeItem("interviewSession");
+                    localStorage.setItem("forceInsightsRefresh", "true");
     
                     setShowEndModal(false);
     

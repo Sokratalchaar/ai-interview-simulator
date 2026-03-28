@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function WelcomePage(){
+    
+const { t, i18n } = useTranslation();
 
 const navigate = useNavigate();
 
@@ -11,11 +14,11 @@ return(
 <div className="max-w-5xl w-full text-center">
 
 <h1 className="text-4xl font-bold mb-4">
-Welcome to AI Interview 👋
+{t("welcomeTitle")} 👋
 </h1>
 
 <p className="text-gray-600 text-lg mb-10">
-Practice technical interviews powered by AI and improve your skills.
+{t("welcomeSubtitle")}.
 </p>
 
 <div className="flex justify-center gap-4 mb-16">
@@ -24,44 +27,47 @@ Practice technical interviews powered by AI and improve your skills.
 onClick={()=>navigate("/start-interview")}
 className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg hover:bg-blue-700"
 >
-Start Interview
+{t("startInterview")}
 </button>
 
 <button
 onClick={()=>navigate("/dashboard")}
 className="bg-gray-200 px-8 py-3 rounded-lg text-lg hover:bg-gray-300"
 >
-Go to Dashboard
+{t("goToDashboard")}
 </button>
 
 </div>
 
-<div className="grid md:grid-cols-3 gap-8 text-left">
+<div
+  dir={i18n.language === "ar" ? "rtl" : "ltr"}
+  className={`grid md:grid-cols-3 gap-8 ${i18n.language === "ar" ? "text-right" : "text-left"}`}
+>
 
 <div className="bg-white p-6 rounded-xl shadow transition transform hover:scale-105 hover:shadow-xl duration-300">
 <h3 className="font-semibold text-lg mb-2">
-🤖 AI Questions
+🤖 {t("aiQuestionsTitle")}
 </h3>
 <p className="text-gray-600">
-Generate technical interview questions tailored to your role and level.
+{t("aiQuestionsDesc")}.
 </p>
 </div>
 
 <div className="bg-white p-6 rounded-xl shadow transition transform hover:scale-105 hover:shadow-xl duration-300">
 <h3 className="font-semibold text-lg mb-2">
-⚡ Instant Feedback
+⚡ {t("instantFeedbackTitle")}
 </h3>
 <p className="text-gray-600">
-Get AI evaluation and feedback for every answer you write.
+{t("instantFeedbackDesc")}.
 </p>
 </div>
 
 <div className="bg-white p-6 rounded-xl shadow transition transform hover:scale-105 hover:shadow-xl duration-300">
 <h3 className="font-semibold text-lg mb-2">
-📊 Track Progress
+📊 {t("trackProgressTitle")}
 </h3>
 <p className="text-gray-600">
-View your interview history and monitor your improvement.
+{t("trackProgressDesc")}.
 </p>
 </div>
 

@@ -38,5 +38,31 @@
     "score": "Score",
     "feedback": "Feedback",
   
-    "previousInterviews": "Vos entretiens précédents"
+    "previousInterviews": "Vos entretiens précédents",
+
+    "welcomeTitle": "Bienvenue dans AI Interview",
+    "welcomeSubtitle": "Entraînez-vous aux entretiens techniques grâce à l'IA et améliorez vos compétences",
+    "goToDashboard": "Aller au tableau de bord",
+    
+
+    "trackProgressTitle": "Suivre les progrès",
+    "trackProgressDesc": "Consultez votre historique d'entretiens et suivez votre progression",
+
+    "instantFeedbackTitle": "Retour instantané",
+    "instantFeedbackDesc": "Obtenez une évaluation et des commentaires de l'IA pour chaque réponse",
+
+    "aiQuestionsTitle": "Questions IA",
+    "aiQuestionsDesc": "Générez des questions techniques adaptées à votre rôle et votre niveau",
+
+    "bestScore": "Meilleur score",
+    "month": "Mois",
+    "week": "Semaine",
+
+    "trend": "Tendance",
+    "strength": "Points forts",
+    "weakness": "Points faibles",
+    "advice": "Conseil"
+    
+    
+
   }
