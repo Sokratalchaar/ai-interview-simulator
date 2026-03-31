@@ -1,6 +1,7 @@
 {
     "dashboard": "لوحة التحكم",
     "startInterview": "بدء المقابلة",
+    "startNewInterview": "بدء مقابلة جديدة",
     "profile": "الملف الشخصي",
     "logout": "تسجيل الخروج",
     "viewDetails":"عرض التفاصيل",
@@ -62,7 +63,14 @@
     "trend": "الاتجاه",
     "strength": "نقاط القوة",
     "weakness": "نقاط الضعف",
-    "advice": "النصيحة"
+    "advice": "النصيحة",
+
+    "noInterviewsTitle": "ابدأ أول مقابلة لك",
+    "noInterviewsDesc": "لم تقم بأي مقابلة بعد. ابدأ الآن لتتبع تقدمك والحصول على تحليل ذكي.",
+    "dashboardTitle": "نظرة عامة على المقابلات",
+    "dashboardSubtitle": "تابع تقدمك وطوّر مهاراتك",
+    "aIInsights":"تحليلات الذكاء الاصطناعي"
+    
     
     
     

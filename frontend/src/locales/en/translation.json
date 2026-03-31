@@ -1,6 +1,7 @@
 {
     "dashboard": "Dashboard",
     "startInterview": "Start Interview",
+    "startNewInterview": "Start New Interview",
     "profile": "Profile",
     "logout": "Logout",
     "viewDetails":"View Details",
@@ -61,7 +62,14 @@
     "trend": "Trend",
     "strength": "Strength",
     "weakness": "Weakness",
-    "advice": "Advice"
+    "advice": "Advice",
+
+    "noInterviewsTitle": "Start Your First Interview",
+    "noInterviewsDesc": "You haven't completed any interviews yet. Start now to track your progress and get AI insights.",
+    "dashboardTitle": "Interview Overview",
+    "dashboardSubtitle": "Track your progress and improve your skills",
+    "aIInsights":"AI Insights"
+    
     
     
 

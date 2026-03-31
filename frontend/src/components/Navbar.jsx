@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ReactCountryFlag from "react-country-flag";
+
 
 
 
@@ -13,15 +14,48 @@ function Navbar() {
    const email = localStorage.getItem("email");
    const { i18n } = useTranslation();
    const [openLang, setOpenLang] = useState(false);
-const [lang, setLang] = useState("en");
+   const [lang, setLang] = useState("en");
+   const langRef = useRef(null);
+   const profileRef = useRef(null);
 
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email")
+    localStorage.removeItem("user");
+    // 🔥 امسح كل cache تبع insights
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("insightsCache_")) {
+      localStorage.removeItem(key);
+    }
+  });
     navigate("/login");
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        langRef.current &&
+        !langRef.current.contains(e.target)
+      ) {
+        setOpenLang(false);
+      }
+  
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -34,7 +68,7 @@ const [lang, setLang] = useState("en");
         >
           AI Interview
         </h1>
-        <div className="relative">
+        <div ref={langRef} className="relative">
 
   <button
     onClick={() => setOpenLang(!openLang)}
@@ -139,7 +173,7 @@ const [lang, setLang] = useState("en");
 
 {open && (
 
-  <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg p-2">
+  <div ref={profileRef} className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg p-2">
 
     <button
       onClick={()=>navigate("/profile")}
