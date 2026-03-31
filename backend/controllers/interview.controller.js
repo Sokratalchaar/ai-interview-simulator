@@ -167,14 +167,12 @@ IMPORTANT:
      
       const result = interviews.map(interview=>{
       const scores = interview.questions.map(q=>q.answer?.score).filter(score => score !== null && score !== undefined);
-      console.log("ID:", interview.id);         // 👈 هون
-      console.log("SCORES:", scores);
+   
       const total=scores.reduce((sum,s)=>sum + s ,0);
       const average = scores.length
       ? Math.round((total / scores.length) * 10) / 10
       : null;
-      console.log("AVG:", average);             // 👈 هون
-      console.log("------");
+     
       return{
         id:interview.id,
         createdAt:interview.createdAt,
@@ -634,18 +632,23 @@ Return JSON ONLY in this format:
       ]
     });
 
-    const aiText = completion.choices[0].message.content;
+    let aiText = completion.choices[0].message.content;
+
+// 🔥 إزالة ```json و ```
+    aiText = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
 
     let parsed;
+
     try {
       parsed = JSON.parse(aiText);
     } catch {
-      console.log("AI RAW:", aiText); // 🔥 debug
+      console.log("AI RAW:", aiText);
+    
       parsed = {
-        trend: aiText,
-        strength: "",
-        weakness: "",
-        advice: ""
+        trend: "Error parsing AI response",
+        strength: "-",
+        weakness: "-",
+        advice: "-"
       };
     }
  

@@ -1,6 +1,7 @@
 {
     "dashboard": "Tableau de bord",
     "startInterview": "Commencer l'entretien",
+    "startNewInterview": "Commencer Un nouvelle Interview",
     "profile": "Profil",
     "logout": "Se déconnecter",
     "viewDetails":"Voir les details",
@@ -61,7 +62,13 @@
     "trend": "Tendance",
     "strength": "Points forts",
     "weakness": "Points faibles",
-    "advice": "Conseil"
+    "advice": "Conseil",
+
+    "noInterviewsTitle": "Commencez votre premier entretien",
+    "noInterviewsDesc": "Vous n'avez encore effectué aucun entretien. Commencez maintenant pour suivre vos progrès.",
+    "dashboardTitle": "Aperçu des entretiens",
+    "dashboardSubtitle": "Suivez vos progrès et améliorez vos compétences",
+    "aIInsights":"Analyses de l'IA"
     
     
 
