@@ -163,3 +163,19 @@ export const getAIInsights = async (range) => {
   
     return res.data;
   };
+
+  export const translateInterview = async (data, language) => {
+    const token = localStorage.getItem("token");
+  
+    const res = await axios.post(
+      "http://localhost:5000/api/interview/translate",
+      { data, language },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+  
+    return res.data;
+  };

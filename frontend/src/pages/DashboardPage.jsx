@@ -44,34 +44,14 @@ function DashboardPage() {
                 const statsData = await getDashboardStats(); 
                 setStats(statsData);
 
-                const shouldRefresh = localStorage.getItem("forceInsightsRefresh") === "true";
+                
 
                 const cacheKey = `insightsCache_${userId}_${range}`;
                 const saved = localStorage.getItem(cacheKey);
-                console.log("🧠 SHOULD REFRESH:", shouldRefresh);
+               
                 console.log("💾 SAVED CACHE:", saved);
 
-               // 🔥 إذا في refresh → تجاهل الكاش بالكامل
-                if (shouldRefresh) {
-                console.log("🚀 BEFORE API CALL");
-                setLoadingInsights(true);
-                const insightsData = await getAIInsights(range);
-                if (!insightsData || !insightsData.trend || insightsData.trend === "No data yet") {
-                  setInsightsCache({});
-                  return;
-                }
-                
-
-                const cache = { en: insightsData };
-
-                setInsightsCache(cache);
-                setLoadingInsights(false);
-                localStorage.setItem(cacheKey, JSON.stringify(cache));
-
-               localStorage.removeItem("forceInsightsRefresh");
-
-               return;
-               }
+              
                if (saved) {
                 const parsed = JSON.parse(saved);
               
@@ -85,13 +65,27 @@ function DashboardPage() {
               }
                 console.log("🚀 BEFORE API CALL");
                 setLoadingInsights(true);
-                const insightsData = await getAIInsights(range);
-               
-                const cache = { en: insightsData };
+const insightsData = await getAIInsights(range);
 
-                setInsightsCache(cache);
-                setLoadingInsights(false);
-                localStorage.setItem(cacheKey, JSON.stringify(cache));
+// 🔥 1. إذا undefined (duplicate call)
+if (!insightsData) {
+  setLoadingInsights(false);
+  return;
+}
+
+// 🔥 2. إذا no data
+if (!insightsData.trend || insightsData.trend === "No data yet") {
+  setInsightsCache({});
+  setLoadingInsights(false);
+  return;
+}
+
+// 🔥 3. إذا valid data
+const cache = { en: insightsData };
+setInsightsCache(cache);
+localStorage.setItem(cacheKey, JSON.stringify(cache));
+setLoadingInsights(false);
+                
             }catch (error) {
 
                 console.error(error);
@@ -139,7 +133,7 @@ function DashboardPage() {
     
       handleTranslation();
     
-    }, [i18n.language, insightsCache?.en]);
+    }, [i18n.language, insightsCache]);
 
     const currentInsights =
   insightsCache[i18n.language] || insightsCache.en || null;;
@@ -191,23 +185,23 @@ function DashboardPage() {
 
       return (
         
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-6">
       {interviews.length > 0 && (
-      <div className="mb-8">
-  <h1 className="text-3xl font-bold text-gray-800">
+      <div className="mb-6 md:mb-8 text-center md:text-start">
+  <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
     {t("dashboardTitle")}
   </h1>
-  <p className="text-gray-500 mt-1">
+  <p className="text-gray-500 mt-1 text-sm md:text-base">
     {t("dashboardSubtitle")}
   </p>
 </div>
       )}
           {/* Start Interview */}
           {interviews.length > 0 && (
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8 flex justify-center md:justify-start">
             <button
               onClick={() => navigate("/start-interview")}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+              className="bg-blue-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg hover:bg-blue-700 w-full md:w-auto"
             >
               {t("startNewInterview")}
             </button>
@@ -216,38 +210,39 @@ function DashboardPage() {
       
           {/* Stats */}
           {interviews.length > 0 && (
-          <div className="grid grid-cols-4 gap-6 mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-10">
 
-  <div className="bg-white shadow rounded-lg p-5">
-    <p className="text-gray-500">{t("totalInterviews")}</p>
-    <h2 className="text-2xl font-bold">{stats?.totalInterviews||"-"}</h2>
+  <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
+    <p className="text-gray-500 text-sm md:text-base">{t("totalInterviews")}</p>
+    <h2 className="text-xl md:text-2xl font-bold">{stats?.totalInterviews||"-"}</h2>
   </div>
 
-  <div className="bg-white shadow rounded-lg p-5">
-    <p className="text-gray-500">{t("completed")}</p>
-    <h2 className="text-2xl font-bold">{stats?.completed||"-"}</h2>
+  <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
+    <p className="text-gray-500 text-sm md:text-base">{t("completed")}</p>
+    <h2 className="text-xl md:text-2xl font-bold">{stats?.completed||"-"}</h2>
   </div>
 
-  <div className="bg-white shadow rounded-lg p-5">
-    <p className="text-gray-500">{t("averageScore")}</p>
-    <h2 className="text-2xl font-bold">{stats?.averageScore||"-"}</h2>
+  <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
+    <p className="text-gray-500 text-sm md:text-base">{t("averageScore")}</p>
+    <h2 className="text-xl md:text-2xl font-bold">{stats?.averageScore||"-"}</h2>
   </div>
 
-  <div className="bg-white shadow rounded-lg p-5">
-    <p className="text-gray-500">{t("bestScore")}</p>
-    <h2 className="text-2xl font-bold">{stats?.bestScore||"-"}</h2>
+  <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
+    <p className="text-gray-500 text-sm md:text-base">{t("bestScore")}</p>
+    <h2 className="text-xl md:text-2xl font-bold">{stats?.bestScore||"-"}</h2>
   </div>
 
 </div>
           )}
-{loadingInsights ? (
-  <div className="bg-white rounded-2xl shadow p-6 mt-6">
 
-    <h2 className="text-xl font-semibold mb-6 text-gray-800">
+{loadingInsights ? (
+  <div className="bg-white rounded-2xl shadow p-4 md:p-6 mt-6">
+
+    <h2 className="text-lg md:text-xl font-semibold mb-6 text-gray-800">
       🤖 {t("aIInsights")}
     </h2>
 
-    <div className="grid md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
       {[1,2,3,4].map((i) => (
         <div key={i} className="p-4 rounded-xl bg-gray-100 animate-pulse h-28" />
@@ -257,13 +252,13 @@ function DashboardPage() {
 
   </div>
 ) : (currentInsights && hasData&&(
- <div className="bg-white rounded-2xl shadow p-6 mt-6">
+ <div className="bg-white rounded-2xl shadow p-4 md:p-6 mt-6">
 
- <h2 className="text-xl font-semibold mb-6 text-gray-800">
+ <h2 className="text-lg md:text-xl font-semibold mb-6 text-gray-800">
    🤖 {t("aIInsights")}
  </h2>
 
- <div className="grid md:grid-cols-2 gap-4">
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
    {/* Trend */}
    <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 hover:scale-[1.02] transition">
@@ -330,19 +325,21 @@ function DashboardPage() {
 </div>
 )
 )}
+
 <br/>
+
 {hasData&&(
-  <div className="flex gap-2 mb-4">
+  <div className="flex flex-col md:flex-row gap-2 mb-4 justify-center md:justify-start">
   <button
     onClick={() => setRange("week")}
-    className={`px-3 py-1 rounded ${range === "week" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+    className={`px-3 py-1 rounded w-full md:w-auto ${range === "week" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
   >
     {t("week")}
   </button>
 
   <button
     onClick={() => setRange("month")}
-    className={`px-3 py-1 rounded ${range === "month" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+    className={`px-3 py-1 rounded w-full md:w-auto ${range === "month" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
   >
     {t("month")}
   </button>
@@ -350,16 +347,16 @@ function DashboardPage() {
 )}
 
 {hasData&&(
-  <ScoreChart data={chartData} />
+  <div className="overflow-x-auto">
+    <ScoreChart data={chartData} />
+  </div>
 )}
-
 
 <br/>
 
       
           {/* Interview History */}
           {loading ? (
-  // 🔄 Skeleton (بدل Loading)
   <div className="animate-pulse space-y-4 mt-10">
     <div className="h-6 bg-gray-200 rounded w-1/3 mx-auto"></div>
     <div className="h-40 bg-gray-200 rounded"></div>
@@ -370,23 +367,20 @@ function DashboardPage() {
     
     <img 
   src={interviewImg} 
-  className="w-72 mx-auto mb-6 float"
+  className="w-48 md:w-72 mx-auto mb-6 float"
 />
 
-    {/* Title */}
-    <h2 className="text-3xl font-bold text-gray-800 mb-3 text-center">
+    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3 text-center">
       {t("noInterviewsTitle")}
     </h2>
 
-    {/* Description */}
-    <p className="text-gray-500 text-center max-w-md mb-8">
+    <p className="text-gray-500 text-center max-w-md mb-8 text-sm md:text-base">
       {t("noInterviewsDesc")}
     </p>
 
-    {/* CTA */}
     <button
-      onClick={() => navigate("/start-interview")}
-      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl shadow-md hover:scale-105 transition-all duration-300"
+      onClick={() => navigate("/start-interview",{replace:true})}
+      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 md:px-8 py-2 md:py-3 rounded-xl shadow-md hover:scale-105 transition-all duration-300 w-full md:w-auto"
     >
       {t("startInterview")}
     </button>
@@ -394,9 +388,13 @@ function DashboardPage() {
   </div>
 ) : (
   <>
-    <h2 className="text-xl font-semibold mb-4 text-gray-800">
-      {t("previousInterviews")}
-    </h2>
+   <h2
+  className={`text-lg md:text-xl font-semibold mb-4 text-gray-800 text-center ${
+    i18n.language === "ar" ? "md:text-right" : "md:text-left"
+  }`}
+>
+  {t("previousInterviews")}
+</h2>
 
     <div className="space-y-4">
       {/* interviews list */}
@@ -410,10 +408,10 @@ function DashboardPage() {
              
               <div
                 key={interview.id}
-                className="bg-white shadow rounded-lg p-5 flex justify-between items-center"
+                className="bg-white shadow rounded-lg p-4 md:p-5 flex flex-col md:flex-row md:justify-between md:items-center gap-4"
               >
       
-                <div>
+                <div className="text-center md:text-left">
                   <h3 className="font-semibold">{t("interview")} #{interviews.length - index}</h3>
                   <p className="text-gray-500">
                     {new Date(interview.createdAt).toLocaleDateString()}
@@ -427,13 +425,13 @@ function DashboardPage() {
                   </p>
                 </div>
       
-                <div className="flex gap-3">
+                <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
       
                   <button
                     onClick={() => navigate(`/interview/${interview.id}`,{
                     state:{interviewNumber: interviews.length - index}
-                    })}
-                    className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+                    },{replace:true})}
+                    className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 w-full md:w-auto"
                   >
                     {t("viewDetails")}
                   </button>
@@ -443,7 +441,7 @@ function DashboardPage() {
                       setSelectedInterview(interview.id);
                       setShowDeleteModal(true);
                     }}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full md:w-auto"
                   >
                     {t("delete")}
                   </button>
@@ -460,7 +458,7 @@ function DashboardPage() {
           {/* DELETE MODAL */}
           {showDeleteModal && (
       
-            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
       
               <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg">
       
@@ -472,11 +470,11 @@ function DashboardPage() {
                   {t("confirmEndInterview")}
                 </p>
       
-                <div className="flex justify-end gap-3">
+                <div className="flex flex-col md:flex-row justify-end gap-3">
       
                   <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 w-full md:w-auto"
                   >
                     {t("cancel")}
                   </button>
@@ -486,7 +484,7 @@ function DashboardPage() {
                       handleDelete(selectedInterview);
                       setShowDeleteModal(false);
                     }}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 w-full md:w-auto"
                   >
                     {t("delete")}
                   </button>

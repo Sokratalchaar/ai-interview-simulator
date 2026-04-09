@@ -26,7 +26,12 @@ function Navbar() {
     localStorage.removeItem("user");
     // 🔥 امسح كل cache تبع insights
   Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith("insightsCache_")) {
+    if (
+      key.startsWith("insightsCache_") ||
+      key.startsWith("translationCache_") ||
+      key.startsWith("interviewCache_") ||
+      key.startsWith("interview_")
+    ) {
       localStorage.removeItem(key);
     }
   });
@@ -58,147 +63,117 @@ function Navbar() {
   }, []);
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-
-      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-
-        <h1
+    <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+  
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+  
+        {/* 🔥 LEFT - Logo */}
+        <div
           onClick={() => navigate("/dashboard")}
-          className="text-xl font-bold text-blue-600 cursor-pointer"
+          className="text-lg md:text-2xl font-bold text-blue-600 cursor-pointer tracking-tight text-start"
         >
           AI Interview
-        </h1>
-        <div ref={langRef} className="relative">
-
-  <button
-    onClick={() => setOpenLang(!openLang)}
-    className="flex items-center gap-2 border rounded-lg px-3 py-1 hover:bg-gray-100"
-  > 
-    {lang === "en" && (
-      <ReactCountryFlag countryCode="GB" svg style={{ width: "20px", height: "20px" }} />
-    )}
-    {lang === "fr" && (
-      <ReactCountryFlag countryCode="FR" svg style={{ width: "20px", height: "20px" }} />
-    )}
-    {lang === "ar" && (
-      <ReactCountryFlag countryCode="SA" svg style={{ width: "20px", height: "20px" }} />
-    )}
-    <span className="uppercase">{lang}</span>
-    <span className="text-xs">▼</span>
-
-    
-  </button>
-
-  {openLang && (
-    <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-lg w-40">
-
-      <button
-        onClick={() => {
-          i18n.changeLanguage("en");
-          setLang("en");
-          setOpenLang(false);
-        }}
-        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
-      >
-        <ReactCountryFlag countryCode="GB" svg style={{ width: "20px", height: "20px" }} />
-        English
-      </button>
-
-      <button
-        onClick={() => {
-          i18n.changeLanguage("fr");
-          setLang("fr");
-          setOpenLang(false);
-        }}
-        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
-      >
-        <ReactCountryFlag countryCode="FR" svg style={{ width: "20px", height: "20px" }} />
-        Français
-      </button>
-
-      <button
-        onClick={() => {
-          i18n.changeLanguage("ar");
-          setLang("ar");
-          setOpenLang(false);
-        }}
-        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full"
-      >
-        <ReactCountryFlag countryCode="SA" svg style={{ width: "20px", height: "20px" }} />
-        العربية
-      </button>
-
-    </div>
-  )}
-
-</div>
-
-        <div className="flex gap-6 items-center">
-
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="text-gray-700 hover:text-blue-600"
-          >
-            Dashboard
-          </button>
-
-          <button
-            onClick={() => navigate("/start-interview")}
-            className="text-gray-700 hover:text-blue-600"
-          >
-            Start Interview
-          </button>
-
-          <button
-          onClick={() => navigate("/profile")}
-          className="text-gray-700 hover:text-blue-600"
-          >
-           Profile
-         </button>
-
-         <div className="relative">
-
-<div
-  onClick={()=>setOpen(!open)}
-  className="flex items-center gap-2 cursor-pointer"
->
-
-  <div className="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full">
-    {email ? email[0].toUpperCase() : "U"}
-  </div>
-
- 
-
-</div>
-
-{open && (
-
-  <div ref={profileRef} className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg p-2">
-
-    <button
-      onClick={()=>navigate("/profile")}
-      className="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
-    >
-      Profile
-    </button>
-
-    <button
-      onClick={handleLogout}
-      className="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded text-red-500"
-    >
-      Logout
-    </button>
-
-  </div>
-
-)}
-
-</div>
-
         </div>
-
+  
+        {/* 🔥 RIGHT */}
+        <div className="flex items-center gap-2 md:gap-4">
+  
+          {/* 🌍 Language */}
+          <div ref={langRef} className="relative">
+  
+            <button
+              onClick={() => setOpenLang(!openLang)}
+              className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-100 transition text-xs md:text-sm"
+            >
+              {lang === "en" && <ReactCountryFlag countryCode="GB" svg style={{ width: 16 }} />}
+              {lang === "fr" && <ReactCountryFlag countryCode="FR" svg style={{ width: 16 }} />}
+              {lang === "ar" && <ReactCountryFlag countryCode="SA" svg style={{ width: 16 }} />}
+  
+              <span className="uppercase font-medium">{lang}</span>
+              <span className="text-xs opacity-70">▼</span>
+            </button>
+  
+            {openLang && (
+              <div className="absolute end-0 mt-2 w-40 md:w-44 bg-white border border-gray-200 shadow-xl rounded-xl overflow-hidden">
+  
+                <button
+                  onClick={() => {
+                    i18n.changeLanguage("en");
+                    setLang("en");
+                    setOpenLang(false);
+                  }}
+                  className="flex items-center gap-3 px-3 md:px-4 py-2 hover:bg-gray-100 w-full text-xs md:text-sm text-start"
+                >
+                  <ReactCountryFlag countryCode="GB" svg />
+                  English
+                </button>
+  
+                <button
+                  onClick={() => {
+                    i18n.changeLanguage("fr");
+                    setLang("fr");
+                    setOpenLang(false);
+                  }}
+                  className="flex items-center gap-3 px-3 md:px-4 py-2 hover:bg-gray-100 w-full text-xs md:text-sm text-start"
+                >
+                  <ReactCountryFlag countryCode="FR" svg />
+                  Français
+                </button>
+  
+                <button
+                  onClick={() => {
+                    i18n.changeLanguage("ar");
+                    setLang("ar");
+                    setOpenLang(false);
+                  }}
+                  className="flex items-center gap-3 px-3 md:px-4 py-2 hover:bg-gray-100 w-full text-xs md:text-sm text-start"
+                >
+                  <ReactCountryFlag countryCode="SA" svg />
+                  العربية
+                </button>
+  
+              </div>
+            )}
+  
+          </div>
+  
+          {/* 👤 Profile */}
+          <div ref={profileRef} className="relative">
+  
+            <div
+              onClick={() => setOpen(!open)}
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <div className="w-8 h-8 md:w-9 md:h-9 bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center rounded-full font-semibold shadow text-sm md:text-base">
+                {email ? email[0].toUpperCase() : "U"}
+              </div>
+            </div>
+  
+            {open && (
+              <div className="absolute end-0 mt-2 w-40 md:w-44 bg-white border border-gray-200 shadow-xl rounded-xl p-2">
+  
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="w-full text-start px-3 py-2 rounded-lg hover:bg-gray-100 text-xs md:text-sm"
+                >
+                  Profile
+                </button>
+  
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-start px-3 py-2 rounded-lg hover:bg-red-50 text-red-500 text-xs md:text-sm"
+                >
+                  Logout
+                </button>
+  
+              </div>
+            )}
+  
+          </div>
+  
+        </div>
+  
       </div>
-
     </nav>
   );
 }
