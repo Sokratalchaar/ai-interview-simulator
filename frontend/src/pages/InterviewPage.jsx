@@ -90,7 +90,7 @@ const recognitionRef = useRef(null);
           language: i18n.language
         });
     
-        // 🟥 إذا انتهت المقابلة
+        //if interview ended
         if (newQuestion?.done) {
           const result = await getInterviewScore(sessionId);
           setFinalScore(result.score);
@@ -107,12 +107,12 @@ localStorage.setItem("forceInsightsRefresh", "true");
           return;
         }
     
-        // 🟩 إذا في سؤال جديد
+        //if there is a new question
         if (newQuestion?.content) {
           setQuestions(prev => [...prev, newQuestion]);
           setCurrentIndex(prev => prev + 1);
     
-          // reset state للسؤال الجديد
+          // reset state for new question
           setAnswer("");
           setScore(null);
           setFeedback("");
@@ -120,7 +120,7 @@ localStorage.setItem("forceInsightsRefresh", "true");
           setTimeLeft(120);
         }
     
-        // 🟨 fallback (احتياط)
+        // fallback 
         else {
           const result = await getInterviewScore(sessionId);
           setFinalScore(result.score);

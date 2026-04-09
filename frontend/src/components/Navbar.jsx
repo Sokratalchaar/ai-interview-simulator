@@ -24,7 +24,7 @@ function Navbar() {
     localStorage.removeItem("token");
     localStorage.removeItem("email")
     localStorage.removeItem("user");
-    // 🔥 امسح كل cache تبع insights
+    
   Object.keys(localStorage).forEach((key) => {
     if (
       key.startsWith("insightsCache_") ||
@@ -67,7 +67,7 @@ function Navbar() {
   
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
   
-        {/* 🔥 LEFT - Logo */}
+       
         <div
           onClick={() => navigate("/dashboard")}
           className="text-lg md:text-2xl font-bold text-blue-600 cursor-pointer tracking-tight text-start"
@@ -75,10 +75,10 @@ function Navbar() {
           AI Interview
         </div>
   
-        {/* 🔥 RIGHT */}
+      
         <div className="flex items-center gap-2 md:gap-4">
   
-          {/* 🌍 Language */}
+          
           <div ref={langRef} className="relative">
   
             <button
@@ -137,7 +137,7 @@ function Navbar() {
   
           </div>
   
-          {/* 👤 Profile */}
+          
           <div ref={profileRef} className="relative">
   
             <div

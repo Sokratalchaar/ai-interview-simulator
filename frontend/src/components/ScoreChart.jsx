@@ -18,7 +18,7 @@ function ScoreChart({ data }) {
   return (
     <div className="bg-white p-6 rounded-xl shadow mt-10" dir={i18n.language === "ar" ? "rtl" : "ltr"}>
       
-      {/* Title + icon */}
+      
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">
           Score Progress
@@ -28,7 +28,7 @@ function ScoreChart({ data }) {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
 
-          {/* 🔥 Gradient */}
+         
           <defs>
             <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#2563eb" stopOpacity={0.8}/>
@@ -36,26 +36,23 @@ function ScoreChart({ data }) {
             </linearGradient>
           </defs>
 
-          {/* Grid */}
+      
           <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" />
 
-          {/* X axis */}
+          
           <XAxis
-  dataKey="date"
-  tick={{ fontSize: 12 }}
-  reversed={i18n.language === "ar"} // 🔥
-/>
+           dataKey="date"
+           tick={{ fontSize: 12 }}
+           reversed={i18n.language === "ar"} 
+          />
 
-          {/* Y axis */}
           <YAxis
-  domain={[0, 10]}
-  orientation={i18n.language === "ar" ? "right" : "left"}
-  tickFormatter={(value) => formatNumber(value)}
-  tickMargin={15}        // 👈 زيد المسافة
-       // 👈 optional (أجمل)
- 
-/>
-          {/* 🔥 Tooltip احترافي */}
+           domain={[0, 10]}
+           orientation={i18n.language === "ar" ? "right" : "left"}
+           tickFormatter={(value) => formatNumber(value)}
+           tickMargin={15}        
+           />
+         
           <Tooltip
             content={({ payload }) => {
               if (!payload || payload.length === 0) return null;
@@ -75,7 +72,7 @@ function ScoreChart({ data }) {
             }}
           />
 
-          {/* 🔥 Area تحت الخط */}
+          
           <Area
             type="monotone"
             dataKey="score"
@@ -83,7 +80,7 @@ function ScoreChart({ data }) {
             fill="url(#colorScore)"
           />
 
-          {/* 🔥 Line ناعم */}
+         
           <Line
             type="monotone"
             dataKey="score"
