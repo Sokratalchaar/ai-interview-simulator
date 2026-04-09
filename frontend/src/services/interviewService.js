@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const API = "http://localhost:5000/api/interview";
+const API = "https://ai-interview-backend-ehir.onrender.com/api/interview";
 
 export const startInterview = async (data)=>{
     const token = localStorage.getItem("token");
@@ -83,7 +83,7 @@ export const deleteInterview = async (id)=>{
     const token = localStorage.getItem("token");
   
     const res = await axios.delete(
-      `http://localhost:5000/api/interview/${id}`,
+      `${API}/${id}`,
       {
         headers:{ Authorization:`Bearer ${token}` }
       }
@@ -94,7 +94,7 @@ export const deleteInterview = async (id)=>{
 
   export const getNextQuestion = async (data) => {
     const token = localStorage.getItem("token");
-    const res = await axios.post("http://localhost:5000/api/interview/next-question", data,
+    const res = await axios.post(`${API}/next-question`, data,
         {
             headers: {
               Authorization: `Bearer ${token}`
@@ -106,7 +106,7 @@ export const deleteInterview = async (id)=>{
 
   export const getDashboardStats = async () => {
     const token = localStorage.getItem("token");
-    const res = await axios.get("http://localhost:5000/api/interview/stats",
+    const res = await axios.get(`${API}/stats`,
         {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -129,7 +129,7 @@ export const getAIInsights = async (range) => {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
-      "http://localhost:5000/api/interview/insights",
+      `${API}/insights`,
       {
         params: { range },
         headers: {
@@ -152,7 +152,7 @@ export const getAIInsights = async (range) => {
     const token = localStorage.getItem("token");
   
     const res = await axios.post(
-      "http://localhost:5000/api/interview/translate-insights",
+      `${API}/translate-insights`,
       { insights, language },
       {
         headers: {
@@ -168,7 +168,7 @@ export const getAIInsights = async (range) => {
     const token = localStorage.getItem("token");
   
     const res = await axios.post(
-      "http://localhost:5000/api/interview/translate",
+      `${API}/translate`,
       { data, language },
       {
         headers: {
