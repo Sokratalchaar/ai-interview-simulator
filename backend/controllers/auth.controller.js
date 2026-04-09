@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 exports.register = async(req,res)=>{
     const {email,password}=req.body;
-    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com)$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
     if(!email || !password){
         return res.status(400).json({
@@ -19,8 +19,8 @@ exports.register = async(req,res)=>{
         });
       }
     
-    if(!gmailRegex.test(email)){
-        return res.status(400).json({error:"Only Gmail addresses are allowed."})
+    if(!emailRegex.test(email)){
+        return res.status(400).json({error:"Only Email addresses are allowed."})
     }
     if(!passwordRegex.test(password)){
         return res.status(400).json({

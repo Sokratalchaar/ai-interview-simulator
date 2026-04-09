@@ -40,7 +40,8 @@ function StartInterviewPage(){
         level,
         tech
       
-      }
+      },
+      replace:true
     });
 
   } catch (error) {
@@ -49,27 +50,27 @@ function StartInterviewPage(){
 
 };
 
- return (
+return (
   <div className="min-h-screen bg-gray-50">
 
-    <div className="max-w-5xl mx-auto px-6 py-16">
+    <div className="max-w-5xl mx-auto px-4 md:px-6 py-10 md:py-16">
 
-      <h1 className="text-4xl font-bold text-center mb-4">
-        Start AI Interview
-      </h1>
+    <h1 className="text-2xl md:text-4xl font-bold text-center mb-4">
+  Start AI Interview
+</h1>
 
-      <p className="text-gray-500 text-center mb-12">
-        Generate a personalized technical interview based on your role and stack.
-      </p>
+<p className="text-gray-500 text-center mb-8 md:mb-12 text-sm md:text-base">
+  {t("generatePersonalInterview")}
+</p>
 
 
-      <div className="bg-white shadow-lg rounded-2xl p-10">
+      <div className="bg-white shadow-lg rounded-2xl p-6 md:p-10">
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
           {/* Role */}
           <div>
-            <label className="block text-sm font-semibold mb-2">
+            <label className="block text-sm font-semibold mb-2 text-start">
               {t("role")}
             </label>
 
@@ -77,21 +78,21 @@ function StartInterviewPage(){
               value={role}
               onChange={(e)=>setRole(e.target.value)}
               placeholder="Backend Developer"
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
 
           {/* Level */}
           <div>
-            <label className="block text-sm font-semibold mb-2">
+            <label className="block text-sm font-semibold mb-2 text-start">
               {t("level")}
             </label>
 
             <select
               value={level}
               onChange={(e)=>setLevel(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">{t("selectLevel")}</option>
               <option value="Junior">Junior</option>
@@ -103,7 +104,7 @@ function StartInterviewPage(){
 
           {/* Tech Stack */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold mb-2">
+            <label className="block text-sm font-semibold mb-2 text-start">
               {t("techStack")}
             </label>
 
@@ -111,7 +112,7 @@ function StartInterviewPage(){
               value={tech}
               onChange={(e)=>setTech(e.target.value)}
               placeholder="Node.js, React, Java, SQL..."
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg p-2 md:p-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -121,7 +122,7 @@ function StartInterviewPage(){
         <button
           onClick={handleStart}
           disabled={!role || !level || !tech}
-          className="w-full mt-8 bg-blue-600 text-white py-3 rounded-lg text-lg hover:bg-blue-700 transition disabled:bg-gray-400"
+          className="w-full mt-6 md:mt-8 bg-blue-600 text-white py-2 md:py-3 rounded-lg text-base md:text-lg hover:bg-blue-700 transition disabled:bg-gray-400"
         >
           {t("startInterview")}
         </button>

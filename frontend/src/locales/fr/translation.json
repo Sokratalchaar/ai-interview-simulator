@@ -68,7 +68,10 @@
     "noInterviewsDesc": "Vous n'avez encore effectué aucun entretien. Commencez maintenant pour suivre vos progrès.",
     "dashboardTitle": "Aperçu des entretiens",
     "dashboardSubtitle": "Suivez vos progrès et améliorez vos compétences",
-    "aIInsights":"Analyses de l'IA"
+    "aIInsights":"Analyses de l'IA",
+
+    "generatePersonalInterview":"Générez un entretien technique personnalisé basé sur votre rôle et votre stack."
+   
     
     
 

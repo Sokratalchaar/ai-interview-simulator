@@ -28,22 +28,22 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
   
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+      <div className="bg-white p-6 sm:p-8 rounded-xl shadow-md w-full max-w-md">
   
-        <h2 className="text-2xl font-bold mb-6 text-center">
+        <h2 className="text-xl sm:text-2xl font-bold mb-5 sm:mb-6 text-center">
           Login
         </h2>
   
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
   
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e)=>setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
           />
   
           <input
@@ -51,23 +51,24 @@ function LoginPage() {
             placeholder="Password"
             value={password}
             onChange={(e)=>setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
           />
   
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white py-2.5 sm:py-2 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
           >
             Login
           </button>
-          <p className="text-sm text-center mt-4">
-           Don't have an account? 
+  
+          <p className="text-xs sm:text-sm text-center mt-3 sm:mt-4">
+            Don't have an account?
             <span
-            className="text-blue-600 cursor-pointer ml-1"
-            onClick={()=>navigate("/register")}
-             >
-           Register
-          </span>
+              className="text-blue-600 cursor-pointer ml-1"
+              onClick={()=>navigate("/register")}
+            >
+              Register
+            </span>
           </p>
   
         </form>

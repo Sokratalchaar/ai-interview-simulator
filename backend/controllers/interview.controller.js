@@ -712,3 +712,66 @@ Return JSON only.
     res.status(500).json({ error: "Translation failed" });
   }
 };
+
+exports.translateInterview = async (req, res) => {
+  try {
+    const { data, language } = req.body;
+
+    if (!data || !language) {
+      return res.status(400).json({ error: "Missing data or language" });
+    }
+
+    const langMap = {
+      ar: "Arabic",
+      fr: "French",
+      en: "English"
+    };
+
+    const selectedLang = langMap[language] || "English";
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `
+You are a translator.
+
+Translate the following JSON values to ${selectedLang}.
+
+IMPORTANT:
+- Keep JSON structure EXACTLY the same
+- Translate ONLY text values (questions, feedback)
+- DO NOT modify keys
+- DO NOT translate code or technical terms
+- Keep formatting clean
+Return JSON only.
+`
+        },
+        {
+          role: "user",
+          content: JSON.stringify(data)
+        }
+      ]
+    });
+
+    let aiText = completion.choices[0].message.content;
+
+    // 🔥 تنظيف ```json
+    aiText = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
+
+    let parsed;
+    try {
+      parsed = JSON.parse(aiText);
+    } catch (err) {
+      console.error("Parse error:", aiText);
+      return res.status(500).json({ error: "Invalid AI response" });
+    }
+
+    res.json(parsed);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Translation failed" });
+  }
+};
