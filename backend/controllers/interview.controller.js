@@ -131,7 +131,6 @@ IMPORTANT:
       
       
   
-      // خزّن السؤال بالداتابيس
       const newQuestion = await prisma.question.create({
         data: {
           content: question,
@@ -547,7 +546,7 @@ exports.getAIInsights = async (req, res) => {
         }
       },
       orderBy: {
-        createdAt: "asc" // مهم للـ trend
+        createdAt: "asc" 
       }
     });
    
@@ -564,7 +563,7 @@ const filteredInterviews = interviews.filter(interview => {
   return true;
 });
 
-    // 1️⃣ نحسب average لكل interview
+    
     const detailedData = filteredInterviews.map(interview => {
       return interview.questions.map(q => {
         if (!q.answer || q.answer.score == null) return null;
@@ -586,7 +585,7 @@ const filteredInterviews = interviews.filter(interview => {
       });
     }
 
-    // 3️⃣ نطلب تحليل من AI
+   
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -634,7 +633,7 @@ Return JSON ONLY in this format:
 
     let aiText = completion.choices[0].message.content;
 
-// 🔥 إزالة ```json و ```
+
     aiText = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
 
     let parsed;
@@ -702,7 +701,7 @@ Return JSON only.
     try {
       parsed = JSON.parse(aiText);
     } catch {
-      parsed = insights; // fallback
+      parsed = insights; 
     }
 
     res.json(parsed);
@@ -757,7 +756,7 @@ Return JSON only.
 
     let aiText = completion.choices[0].message.content;
 
-    // 🔥 تنظيف ```json
+ 
     aiText = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
 
     let parsed;

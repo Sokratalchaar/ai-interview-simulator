@@ -26,13 +26,11 @@ function DashboardPage() {
       const user = JSON.parse(localStorage.getItem("user"));
       setUserId(user?.id);
     }, []);
+
     useEffect(()=>{
-        const fetchData = async()=>{
-        
-
-   
-
-    console.log("🚀 FETCH ONCE");
+      const fetchData = async()=>{
+  
+      console.log("🚀 FETCH ONCE");
             try{
               console.log("🔥 DASHBOARD useEffect RUNNING");
               console.log("📦 RANGE:", range);
@@ -55,7 +53,7 @@ function DashboardPage() {
                if (saved) {
                 const parsed = JSON.parse(saved);
               
-                // 🛑 إذا الكاش خربان → تجاهلو
+               
                 if (!parsed.en) {
                   localStorage.removeItem(cacheKey);
                 } else {
@@ -65,45 +63,45 @@ function DashboardPage() {
               }
                 console.log("🚀 BEFORE API CALL");
                 setLoadingInsights(true);
-const insightsData = await getAIInsights(range);
+               const insightsData = await getAIInsights(range);
 
-// 🔥 1. إذا undefined (duplicate call)
-if (!insightsData) {
-  setLoadingInsights(false);
-  return;
-}
+             // undefined (duplicate call)
+             if (!insightsData) {
+             setLoadingInsights(false);
+             return;
+             }
 
-// 🔥 2. إذا no data
-if (!insightsData.trend || insightsData.trend === "No data yet") {
-  setInsightsCache({});
-  setLoadingInsights(false);
-  return;
-}
+           //if no data
+           if (!insightsData.trend || insightsData.trend === "No data yet") {
+           setInsightsCache({});
+           setLoadingInsights(false);
+           return;
+           }
 
-// 🔥 3. إذا valid data
-const cache = { en: insightsData };
-setInsightsCache(cache);
-localStorage.setItem(cacheKey, JSON.stringify(cache));
-setLoadingInsights(false);
+           //if valid data
+           const cache = { en: insightsData };
+           setInsightsCache(cache);
+           localStorage.setItem(cacheKey, JSON.stringify(cache));
+          setLoadingInsights(false);
                 
             }catch (error) {
 
                 console.error(error);
 
             }
-        };
-        fetchData(); 
-    },[range,userId]);
+           };
+           fetchData(); 
+           },[range,userId]);
     
   
 
     useEffect(() => {
       const handleTranslation = async () => {
     
-        // 🔥 تأكد في data
+        // if data
         if (!insightsCache?.en) return;
     
-        // 🔥 إذا already مترجمة
+        //if already translated
         if (insightsCache[i18n.language]) return;
     
         try {
@@ -177,7 +175,7 @@ setLoadingInsights(false);
         }))
         .reverse();
       
-      // ✅ هون الحل
+     
       if (range === "week") {
         chartData = chartData.slice(-10);
       }
@@ -188,13 +186,13 @@ setLoadingInsights(false);
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-6">
       {interviews.length > 0 && (
       <div className="mb-6 md:mb-8 text-center md:text-start">
-  <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-    {t("dashboardTitle")}
-  </h1>
-  <p className="text-gray-500 mt-1 text-sm md:text-base">
-    {t("dashboardSubtitle")}
-  </p>
-</div>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+        {t("dashboardTitle")}
+        </h1>
+        <p className="text-gray-500 mt-1 text-sm md:text-base">
+        {t("dashboardSubtitle")}
+        </p>
+      </div>
       )}
           {/* Start Interview */}
           {interviews.length > 0 && (
@@ -212,150 +210,150 @@ setLoadingInsights(false);
           {interviews.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-10">
 
-  <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
-    <p className="text-gray-500 text-sm md:text-base">{t("totalInterviews")}</p>
-    <h2 className="text-xl md:text-2xl font-bold">{stats?.totalInterviews||"-"}</h2>
-  </div>
+          <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
+            <p className="text-gray-500 text-sm md:text-base">{t("totalInterviews")}</p>
+            <h2 className="text-xl md:text-2xl font-bold">{stats?.totalInterviews||"-"}</h2>
+          </div>
 
-  <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
-    <p className="text-gray-500 text-sm md:text-base">{t("completed")}</p>
-    <h2 className="text-xl md:text-2xl font-bold">{stats?.completed||"-"}</h2>
-  </div>
+          <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
+            <p className="text-gray-500 text-sm md:text-base">{t("completed")}</p>
+            <h2 className="text-xl md:text-2xl font-bold">{stats?.completed||"-"}</h2>
+          </div>
 
-  <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
-    <p className="text-gray-500 text-sm md:text-base">{t("averageScore")}</p>
-    <h2 className="text-xl md:text-2xl font-bold">{stats?.averageScore||"-"}</h2>
-  </div>
+          <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
+            <p className="text-gray-500 text-sm md:text-base">{t("averageScore")}</p>
+            <h2 className="text-xl md:text-2xl font-bold">{stats?.averageScore||"-"}</h2>
+         </div>
 
-  <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
-    <p className="text-gray-500 text-sm md:text-base">{t("bestScore")}</p>
-    <h2 className="text-xl md:text-2xl font-bold">{stats?.bestScore||"-"}</h2>
-  </div>
+         <div className="bg-white shadow rounded-lg p-4 md:p-5 text-center md:text-left">
+           <p className="text-gray-500 text-sm md:text-base">{t("bestScore")}</p>
+           <h2 className="text-xl md:text-2xl font-bold">{stats?.bestScore||"-"}</h2>
+        </div>
 
-</div>
+        </div>
           )}
 
-{loadingInsights ? (
-  <div className="bg-white rounded-2xl shadow p-4 md:p-6 mt-6">
+    {loadingInsights ? (
+      <div className="bg-white rounded-2xl shadow p-4 md:p-6 mt-6">
 
-    <h2 className="text-lg md:text-xl font-semibold mb-6 text-gray-800">
-      🤖 {t("aIInsights")}
-    </h2>
+        <h2 className="text-lg md:text-xl font-semibold mb-6 text-gray-800">
+          🤖 {t("aIInsights")}
+        </h2>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      {[1,2,3,4].map((i) => (
-        <div key={i} className="p-4 rounded-xl bg-gray-100 animate-pulse h-28" />
-      ))}
+          {[1,2,3,4].map((i) => (
+            <div key={i} className="p-4 rounded-xl bg-gray-100 animate-pulse h-28" />
+          ))}
+
+        </div>
+
+      </div>
+    ) : (currentInsights && hasData&&(
+     <div className="bg-white rounded-2xl shadow p-4 md:p-6 mt-6">
+
+     <h2 className="text-lg md:text-xl font-semibold mb-6 text-gray-800">
+       🤖 {t("aIInsights")}
+     </h2>
+
+     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+       {/* Trend */}
+       <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 hover:scale-[1.02] transition">
+         <div className="flex items-center gap-2 mb-2">
+           <span className="text-xl">📊</span>
+           <h3 className="font-semibold text-blue-700">{t("trend")}</h3>
+         </div>
+         <p className="text-gray-600 text-sm leading-relaxed">
+      {loadingTranslation ? (
+        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+      ) : (
+        currentInsights?.trend
+      )}
+    </p>
+       </div>
+
+       {/* Strength */}
+       <div className="p-4 rounded-xl bg-green-50 border border-green-100 hover:scale-[1.02] transition">
+         <div className="flex items-center gap-2 mb-2">
+           <span className="text-xl">💪</span>
+           <h3 className="font-semibold text-green-700">{t("strength")}</h3>
+         </div>
+         <p className="text-gray-600 text-sm leading-relaxed">
+      {loadingTranslation ? (
+        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+      ) : (
+        currentInsights?.strength
+      )}
+    </p>
+       </div>
+
+       {/* Weakness */}
+       <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-100 hover:scale-[1.02] transition">
+         <div className="flex items-center gap-2 mb-2">
+           <span className="text-xl">⚠️</span>
+           <h3 className="font-semibold text-yellow-700">{t("weakness")}</h3>
+         </div>
+         <p className="text-gray-600 text-sm leading-relaxed">
+      {loadingTranslation ? (
+        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+      ) : (
+        currentInsights?.weakness
+      )}
+    </p>
+       </div>
+
+       {/* Advice */}
+       <div className="p-4 rounded-xl bg-purple-50 border border-purple-100 hover:scale-[1.02] transition">
+         <div className="flex items-center gap-2 mb-2">
+           <span className="text-xl">🚀</span>
+           <h3 className="font-semibold text-purple-700">{t("advice")}</h3>
+         </div>
+         <p className="text-gray-600 text-sm leading-relaxed">
+      {loadingTranslation ? (
+        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+      ) : (
+        currentInsights?.advice
+      )}
+    </p>
+       </div>
+
+     </div>
 
     </div>
+    )
+    )}
 
-  </div>
-) : (currentInsights && hasData&&(
- <div className="bg-white rounded-2xl shadow p-4 md:p-6 mt-6">
+    <br/>
 
- <h2 className="text-lg md:text-xl font-semibold mb-6 text-gray-800">
-   🤖 {t("aIInsights")}
- </h2>
+    {hasData&&(
+      <div className="flex flex-col md:flex-row gap-2 mb-4 justify-center md:justify-start">
+      <button
+        onClick={() => setRange("week")}
+        className={`px-3 py-1 rounded w-full md:w-auto ${range === "week" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+      >
+        {t("week")}
+      </button>
 
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <button
+        onClick={() => setRange("month")}
+        className={`px-3 py-1 rounded w-full md:w-auto ${range === "month" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+      >
+        {t("month")}
+      </button>
+    </div>
+    )}
 
-   {/* Trend */}
-   <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 hover:scale-[1.02] transition">
-     <div className="flex items-center gap-2 mb-2">
-       <span className="text-xl">📊</span>
-       <h3 className="font-semibold text-blue-700">{t("trend")}</h3>
-     </div>
-     <p className="text-gray-600 text-sm leading-relaxed">
-  {loadingTranslation ? (
-    <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-  ) : (
-    currentInsights?.trend
-  )}
-</p>
-   </div>
+    {hasData&&(
+      <div className="overflow-x-auto">
+        <ScoreChart data={chartData} />
+      </div>
+    )}
 
-   {/* Strength */}
-   <div className="p-4 rounded-xl bg-green-50 border border-green-100 hover:scale-[1.02] transition">
-     <div className="flex items-center gap-2 mb-2">
-       <span className="text-xl">💪</span>
-       <h3 className="font-semibold text-green-700">{t("strength")}</h3>
-     </div>
-     <p className="text-gray-600 text-sm leading-relaxed">
-  {loadingTranslation ? (
-    <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-  ) : (
-    currentInsights?.strength
-  )}
-</p>
-   </div>
-
-   {/* Weakness */}
-   <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-100 hover:scale-[1.02] transition">
-     <div className="flex items-center gap-2 mb-2">
-       <span className="text-xl">⚠️</span>
-       <h3 className="font-semibold text-yellow-700">{t("weakness")}</h3>
-     </div>
-     <p className="text-gray-600 text-sm leading-relaxed">
-  {loadingTranslation ? (
-    <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-  ) : (
-    currentInsights?.weakness
-  )}
-</p>
-   </div>
-
-   {/* Advice */}
-   <div className="p-4 rounded-xl bg-purple-50 border border-purple-100 hover:scale-[1.02] transition">
-     <div className="flex items-center gap-2 mb-2">
-       <span className="text-xl">🚀</span>
-       <h3 className="font-semibold text-purple-700">{t("advice")}</h3>
-     </div>
-     <p className="text-gray-600 text-sm leading-relaxed">
-  {loadingTranslation ? (
-    <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-  ) : (
-    currentInsights?.advice
-  )}
-</p>
-   </div>
-
- </div>
-
-</div>
-)
-)}
-
-<br/>
-
-{hasData&&(
-  <div className="flex flex-col md:flex-row gap-2 mb-4 justify-center md:justify-start">
-  <button
-    onClick={() => setRange("week")}
-    className={`px-3 py-1 rounded w-full md:w-auto ${range === "week" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-  >
-    {t("week")}
-  </button>
-
-  <button
-    onClick={() => setRange("month")}
-    className={`px-3 py-1 rounded w-full md:w-auto ${range === "month" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-  >
-    {t("month")}
-  </button>
-</div>
-)}
-
-{hasData&&(
-  <div className="overflow-x-auto">
-    <ScoreChart data={chartData} />
-  </div>
-)}
-
-<br/>
+    <br/>
 
       
-          {/* Interview History */}
+          
           {loading ? (
   <div className="animate-pulse space-y-4 mt-10">
     <div className="h-6 bg-gray-200 rounded w-1/3 mx-auto"></div>

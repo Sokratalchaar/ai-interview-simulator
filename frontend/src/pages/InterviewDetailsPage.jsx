@@ -31,20 +31,20 @@ function InterviewDetailsPage(){
       const lang = i18n.language;
       const cacheKey = `interview_${interview.id}_${lang}`;
     
-      // ✅ check cache
+      // check cache
       const saved = localStorage.getItem(cacheKey);
       if (saved) {
         setTranslatedInterview(JSON.parse(saved));
         return;
       }
     
-      // ❌ إذا EN → ما بدنا ترجمة
+      //if EN => don't translate
       if (lang === interview.language) {
         setTranslatedInterview(interview);
         return;
       }
     
-      // 🚀 translate
+      // translate
       const translate = async () => {
         try {
           setLoadingTranslation(true);
@@ -59,7 +59,7 @@ function InterviewDetailsPage(){
     
           const res = await translateInterview(payload, lang);
     
-          // 🔥 دمج الترجمة مع الداتا الأصلية
+         
           const merged = {
             ...interview,
             questions: interview.questions.map((q, i) => ({
