@@ -377,7 +377,7 @@ function DashboardPage() {
     </p>
 
     <button
-      onClick={() => navigate("/start-interview",{replace:true})}
+      onClick={() => navigate("/start-interview")}
       className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 md:px-8 py-2 md:py-3 rounded-xl shadow-md hover:scale-105 transition-all duration-300 w-full md:w-auto"
     >
       {t("startInterview")}
@@ -428,7 +428,7 @@ function DashboardPage() {
                   <button
                     onClick={() => navigate(`/interview/${interview.id}`,{
                     state:{interviewNumber: interviews.length - index}
-                    },{replace:true})}
+                    })}
                     className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 w-full md:w-auto"
                   >
                     {t("viewDetails")}
