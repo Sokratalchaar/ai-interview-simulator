@@ -76,7 +76,7 @@ function RegisterPage() {
                 Already have an account?
                 <span
                   className="text-blue-600 cursor-pointer ml-1"
-                  onClick={()=>navigate("/login")}
+                  onClick={()=>navigate("/login",{replace:true})}
                 >
                   Login
                 </span>
