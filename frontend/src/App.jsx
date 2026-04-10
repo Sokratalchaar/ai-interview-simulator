@@ -40,9 +40,9 @@ function App() {
   path="/"
   element={
     localStorage.getItem("token") ? (
-      <Navigate to="/dashboard" replace />
+      <Navigate to="/dashboard" />
     ) : (
-      <Navigate to="/login" replace />
+      <Navigate to="/login" />
     )
   }
 />
