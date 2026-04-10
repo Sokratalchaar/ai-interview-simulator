@@ -36,6 +36,19 @@ function App() {
       <Route path="/welcome" element={<WelcomePage />} />
 
       <Route
+  path="/"
+  element={
+    localStorage.getItem("token") ? (
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    ) : (
+      <LoginPage />
+    )
+  }
+/>
+
+      <Route
   path="/dashboard"
   element={
     <ProtectedRoute>
