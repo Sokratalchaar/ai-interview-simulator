@@ -11,10 +11,9 @@ import ProfilePage from "./pages/ProfilePage";
 import WelcomePage from "./pages/WelcomePage";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-import { Navigate,useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 function App() {
   const { i18n } = useTranslation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (i18n.language === "ar") {
@@ -24,37 +23,6 @@ function App() {
     }
   }, [i18n.language]);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const fallback = token ? "/welcome" : "/login";
-
-    if (!window.history.state?.app) {
-      window.history.replaceState({ app: true }, "", window.location.href);
-      window.history.pushState({ app: true }, "", window.location.href);
-    }
-
-    const handlePopState = () => {
-      const path = window.location.pathname;
-
-      if (path === "/dashboard") {
-        navigate("/welcome", { replace: true });
-        return;
-      }
-
-      if (path === "/welcome") {
-        navigate(fallback, { replace: true });
-        return;
-      }
-
-      if (path === "/" || path === "/login" || path === "/register") {
-        navigate(fallback, { replace: true });
-        return;
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [navigate]);
   return (
     <>
     <Navbar/>
@@ -131,5 +99,3 @@ function App() {
 }
 
 export default App;
-
-
