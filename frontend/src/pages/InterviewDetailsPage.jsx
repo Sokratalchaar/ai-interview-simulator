@@ -86,6 +86,7 @@ function InterviewDetailsPage(){
       translate();
     
     }, [i18n.language, interview]);
+   
     if(!interview || !translatedInterview){
       return (
         <div className="min-h-screen bg-gray-50">

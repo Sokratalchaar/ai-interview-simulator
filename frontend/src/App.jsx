@@ -23,6 +23,24 @@ function App() {
     }
   }, [i18n.language]);
 
+  useEffect(() => {
+    console.log("APP MOUNTED");
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (window.location.pathname === "/dashboard") {
+        navigate("/welcome");
+      }
+    };
+  
+    window.addEventListener("popstate", handlePopState);
+  
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
   return (
     <>
     <Navbar/>
@@ -99,3 +117,5 @@ function App() {
 }
 
 export default App;
+
+

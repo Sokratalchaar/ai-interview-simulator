@@ -1,11 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+
 function WelcomePage(){
     
 const { t, i18n } = useTranslation();
 
 const navigate = useNavigate();
+
+
 
 return(
 
@@ -32,6 +35,7 @@ return(
   
   <button
   onClick={()=>navigate("/dashboard")}
+  
   className="w-full sm:w-auto bg-gray-200 px-6 sm:px-8 py-3 rounded-lg text-base sm:text-lg hover:bg-gray-300"
   >
   {t("goToDashboard")}
