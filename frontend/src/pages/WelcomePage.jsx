@@ -24,14 +24,14 @@ return(
   <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-12 md:mb-16">
   
   <button
-  onClick={()=>navigate("/start-interview",{ replace: true })}
+  onClick={()=>navigate("/start-interview")}
   className="w-full sm:w-auto bg-blue-600 text-white px-6 sm:px-8 py-3 rounded-lg text-base sm:text-lg hover:bg-blue-700"
   >
   {t("startInterview")}
   </button>
   
   <button
-  onClick={()=>navigate("/dashboard",{replace:true})}
+  onClick={()=>navigate("/dashboard")}
   className="w-full sm:w-auto bg-gray-200 px-6 sm:px-8 py-3 rounded-lg text-base sm:text-lg hover:bg-gray-300"
   >
   {t("goToDashboard")}
