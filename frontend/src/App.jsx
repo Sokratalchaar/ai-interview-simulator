@@ -11,6 +11,7 @@ import ProfilePage from "./pages/ProfilePage";
 import WelcomePage from "./pages/WelcomePage";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 function App() {
   const { i18n } = useTranslation();
 
@@ -39,11 +40,9 @@ function App() {
   path="/"
   element={
     localStorage.getItem("token") ? (
-      <ProtectedRoute>
-        <DashboardPage />
-      </ProtectedRoute>
+      <Navigate to="/dashboard" replace />
     ) : (
-      <LoginPage />
+      <Navigate to="/login" replace />
     )
   }
 />
