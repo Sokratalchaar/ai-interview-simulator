@@ -31,7 +31,7 @@ return(
   </button>
   
   <button
-  onClick={()=>navigate("/dashboard")}
+  onClick={()=>navigate("/dashboard",{replace:true})}
   className="w-full sm:w-auto bg-gray-200 px-6 sm:px-8 py-3 rounded-lg text-base sm:text-lg hover:bg-gray-300"
   >
   {t("goToDashboard")}

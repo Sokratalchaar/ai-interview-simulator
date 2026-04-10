@@ -18,7 +18,7 @@ function LoginPage() {
         localStorage.setItem("email", email);
     
         console.log("Token:", data.token);
-        navigate("/welcome");
+        navigate("/welcome",{replace:true});
     
       } catch (error) {
     
@@ -65,7 +65,7 @@ function LoginPage() {
             Don't have an account?
             <span
               className="text-blue-600 cursor-pointer ml-1"
-              onClick={()=>navigate("/register")}
+              onClick={()=>navigate("/register",{replace:true})}
             >
               Register
             </span>

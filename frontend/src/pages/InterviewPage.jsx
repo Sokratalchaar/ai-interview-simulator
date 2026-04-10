@@ -52,7 +52,7 @@ const recognitionRef = useRef(null);
     useEffect(()=>{
         
                 if(!initialSessionId){
-                  navigate("/start-interview");
+                  navigate("/start-interview",{replace:true});
                 }
           
      }, []);
@@ -100,7 +100,7 @@ const recognitionRef = useRef(null);
 localStorage.setItem("forceInsightsRefresh", "true");
 
 
-  navigate("/dashboard");
+  navigate("/dashboard",{replace:true});
 
 
 
@@ -131,7 +131,7 @@ localStorage.removeItem("insightsCache_month");
 localStorage.setItem("forceInsightsRefresh", "true");
 
 
-  navigate("/dashboard");
+  navigate("/dashboard",{replace:true});
 
         }
     
