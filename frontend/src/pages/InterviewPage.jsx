@@ -70,7 +70,7 @@ const recognitionRef = useRef(null);
     },[timeLeft,submitted]);
 
     
-
+  
 
     const handleNextQuestion = async () => {
       try {
