@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { login } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function LoginPage() {
 
@@ -27,6 +28,14 @@ function LoginPage() {
     
       }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+  
+    if (token) {
+      navigate("/welcome", { replace: true });
+    }
+  }, []);
  
 
   return (
