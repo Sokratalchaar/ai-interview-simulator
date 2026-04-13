@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ReactCountryFlag from "react-country-flag";
+import { ArrowLeft } from "lucide-react";
+import { Home, User, LogOut } from "lucide-react";
 
 
 
@@ -62,6 +64,14 @@ function Navbar() {
     };
   }, []);
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/welcome");
+    }
+  };
+
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
   
@@ -79,7 +89,15 @@ function Navbar() {
         <div className="flex items-center gap-2 md:gap-4">
   
           
-          <div ref={langRef} className="relative">
+          <div ref={langRef} className="relative flex items-center gap-2">
+  
+  {/* 🔙 Back Arrow */}
+  <button
+    onClick={handleBack}
+    className="p-2 rounded-full hover:bg-blue-50 hover:text-blue-600 transition"
+  >
+    <ArrowLeft size={18} />
+  </button>
   
             <button
               onClick={() => setOpenLang(!openLang)}
@@ -94,7 +112,7 @@ function Navbar() {
             </button>
   
             {openLang && (
-              <div className="absolute end-0 mt-2 w-40 md:w-44 bg-white border border-gray-200 shadow-xl rounded-xl overflow-hidden">
+              <div className="absolute top-full right-0 mt-2 w-40 md:w-44 max-w-[90vw] z-50 bg-white border border-gray-200 shadow-xl rounded-xl overflow-hidden">
   
                 <button
                   onClick={() => {
@@ -150,19 +168,36 @@ function Navbar() {
             </div>
   
             {open && (
-              <div className="absolute end-0 mt-2 w-40 md:w-44 bg-white border border-gray-200 shadow-xl rounded-xl p-2">
-  
+              <div className="absolute end-0 mt-2 w-44 bg-white/70 backdrop-blur-md border border-gray-200 shadow-2xl rounded-2xl p-2">
                 <button
-                  onClick={() => navigate("/profile")}
-                  className="w-full text-start px-3 py-2 rounded-lg hover:bg-gray-100 text-xs md:text-sm"
+  onClick={() => {navigate("/dashboard",{replace:true});
+    setOpen(false);
+  }}
+   className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-50 text-blue-600  text-xs md:text-sm"
+>
+<Home size={16} />
+  Home
+</button>
+<div className="h-px bg-gray-200 my-1"></div>
+                <button
+                  onClick={() => {navigate("/profile");
+                    setOpen(false);
+                  }}
+                   className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-xs md:text-sm"
                 >
+                  <User size={16} />
                   Profile
                 </button>
   
                 <button
-                  onClick={handleLogout}
-                  className="w-full text-start px-3 py-2 rounded-lg hover:bg-red-50 text-red-500 text-xs md:text-sm"
+                  onClick={() => {
+                    handleLogout();
+                    setOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 text-red-500 text-xs md:text-sm"
+
                 >
+                  <LogOut size={16} />
                   Logout
                 </button>
   

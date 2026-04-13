@@ -200,7 +200,7 @@ function DashboardPage() {
           {interviews.length > 0 && (
           <div className="mb-6 md:mb-8 flex justify-center md:justify-start">
             <button
-              onClick={() => navigate("/start-interview",{replace:true})}
+              onClick={() => navigate("/start-interview")}
               className="bg-blue-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg hover:bg-blue-700 w-full md:w-auto"
             >
               {t("startNewInterview")}
