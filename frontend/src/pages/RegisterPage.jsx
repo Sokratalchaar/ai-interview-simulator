@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function RegisterPage() {
     const [error,setError] = useState("");
@@ -31,6 +32,13 @@ function RegisterPage() {
           setLoading(false);
         }
       };
+      useEffect(() => {
+        const token = localStorage.getItem("token");
+      
+        if (token) {
+          navigate("/welcome", { replace: true });
+        }
+      }, []);
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       
