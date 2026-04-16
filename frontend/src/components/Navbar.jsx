@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import ReactCountryFlag from "react-country-flag";
 import { ArrowLeft } from "lucide-react";
 import { Home, User, LogOut } from "lucide-react";
-
+import { useLocation } from "react-router-dom";
 
 
 
@@ -20,8 +20,9 @@ function Navbar() {
    const langRef = useRef(null);
    const profileRef = useRef(null);
 
-  const navigate = useNavigate();
-
+   const navigate = useNavigate();
+   const location = useLocation();
+   const token = localStorage.getItem("token");
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email")
@@ -72,6 +73,14 @@ function Navbar() {
     }
   };
 
+  const hideBackButton =
+  location.pathname === "/login" ||
+  location.pathname === "/welcome";
+
+  const isAuthPage =
+  location.pathname === "/login" ||
+  location.pathname === "/register";
+
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
   
@@ -92,12 +101,14 @@ function Navbar() {
           <div ref={langRef} className="relative flex items-center gap-2">
   
   {/* 🔙 Back Arrow */}
+  {!hideBackButton && (
   <button
     onClick={handleBack}
     className="p-2 rounded-full hover:bg-blue-50 hover:text-blue-600 transition"
   >
     <ArrowLeft size={18} />
   </button>
+)}
   
             <button
               onClick={() => setOpenLang(!openLang)}
@@ -155,7 +166,7 @@ function Navbar() {
   
           </div>
   
-          
+          {!isAuthPage && token && (
           <div ref={profileRef} className="relative">
   
             <div
@@ -170,15 +181,15 @@ function Navbar() {
             {open && (
               <div className="absolute end-0 mt-2 w-44 bg-white/70 backdrop-blur-md border border-gray-200 shadow-2xl rounded-2xl p-2">
                 <button
-  onClick={() => {navigate("/dashboard",{replace:true});
-    setOpen(false);
-  }}
-   className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-50 text-blue-600  text-xs md:text-sm"
->
-<Home size={16} />
-  Home
-</button>
-<div className="h-px bg-gray-200 my-1"></div>
+                 onClick={() => {navigate("/dashboard",{replace:true});
+                 setOpen(false);
+            }}
+               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-50 text-blue-600  text-xs md:text-sm"
+               >
+               <Home size={16} />
+                 Home
+               </button>
+            <div className="h-px bg-gray-200 my-1"></div>
                 <button
                   onClick={() => {navigate("/profile");
                     setOpen(false);
@@ -205,8 +216,17 @@ function Navbar() {
             )}
   
           </div>
-  
+      )}
+            {isAuthPage && !token && (
+              <button
+               onClick={() => navigate("/login")}
+               className="px-3 py-1.5 rounded-md bg-blue-600 text-white text-xs md:text-sm hover:bg-blue-700 transition"
+               >
+               Sign In
+             </button>
+            )}
         </div>
+        
   
       </div>
     </nav>

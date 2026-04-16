@@ -28,6 +28,7 @@ function InterviewPage() {
     const [timeLeft,setTimeLeft] = useState(120);
     const [recording, setRecording] = useState(false);
     const [startTime, setStartTime] = useState(null);
+    const [isSpeaking, setIsSpeaking] = useState(false);
     const config = JSON.parse(localStorage.getItem("interviewConfig") || "{}");
 
     const {
@@ -141,11 +142,8 @@ localStorage.setItem("forceInsightsRefresh", "true");
         setLoading(false);
       }
     };
-    useEffect(() => {
-      setStartTime(Date.now());
-    }, [currentIndex]);
-
-     
+  
+ 
 
      const handleSubmit = async () =>{
       if(submitted) return;
@@ -170,7 +168,7 @@ localStorage.setItem("forceInsightsRefresh", "true");
     
       }
      };
-
+    
 
      const startRecording = async () => {
 
@@ -313,8 +311,7 @@ localStorage.setItem("forceInsightsRefresh", "true");
               }}
             />
           </div>
-        
-        
+
           {/* question */}
           <div className="bg-white shadow-sm border rounded-xl p-4 md:p-6 mb-6">
         
